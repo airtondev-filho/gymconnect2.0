@@ -24,7 +24,7 @@ public class ExercicioService {
         if (ex.getNome().equals("")) {
             rm.setMensagem("O campo nome exercicio precisa ser preenchido!");
             return new ResponseEntity<ResponseModel>(rm, HttpStatus.BAD_REQUEST);
-        } else if (ex.getLinkYoutube().equals("")) {
+        } else if (ex.getLinkYoutube() == null || ex.getLinkYoutube().isBlank()) {
             rm.setMensagem("O campo Link não foi preenchido!");
             return new ResponseEntity<ResponseModel>(rm, HttpStatus.BAD_REQUEST);
         } else {

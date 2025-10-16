@@ -8,28 +8,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gymconnect.model.ResponseModel;
 import br.com.gymconnect.model.Usuario;
 import br.com.gymconnect.service.UsuarioService;
 
-
-
-
 @RestController
+@RequestMapping("/usuarios")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService us;
 
-    @DeleteMapping("/remover/{idUsuario}")
+    @DeleteMapping("/{idUsuario}")
     public ResponseEntity<ResponseModel> remover(@PathVariable long idUsuario){
         return us.remover(idUsuario);
     }
 
-    @PostMapping("/cadastrar")
+    @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody Usuario user){
         return us.cadastrar(user);
     }
@@ -39,7 +38,7 @@ public class UsuarioController {
         return us.login(user.getEmail(), user.getSenha());
     }
 
-    @GetMapping("/listar")
+    @GetMapping
     public Iterable<Usuario> listar() {
         return us.listar();
     }
