@@ -1,5 +1,8 @@
 package br.com.gymconnect.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +21,6 @@ public class ExercicioService {
     @Autowired
     private ExercicioRepository er;
 
-    //cadastrar
     public ResponseEntity<?> cadastrar(Exercicio ex){
 
         if (ex.getNome().equals("")) {
@@ -33,17 +35,27 @@ public class ExercicioService {
 
     }
 
-    public Iterable<Exercicio> listar() {
-
-        return er.findAll();
-    }
-
     public ResponseEntity<ResponseModel> remover(Long idExercicio){
 
         er.deleteById(idExercicio);
         
         rm.setMensagem("Exercicio deletado");
         return new ResponseEntity<ResponseModel>(rm, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> listar(Long idExercicio){
+
+        ResponseModel rm = new ResponseModel();
+
+        Optional<Exercicio> exercicioOpt = er.findById(idExercicio);
+
+        if (exercicioOpt.isEmpty()) {
+            rm.setMensagem("Exercicio não encontrado!");
+            return new ResponseEntity<ResponseModel>(rm, HttpStatus.NOT_FOUND);
+        }
+
+        List<Exercicio> exercicios = er.findByIdExercicio(idExercicio);
+        return ResponseEntity.ok(exercicios);
     }
     
 }

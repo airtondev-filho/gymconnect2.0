@@ -25,13 +25,13 @@ public class ExercicioController {
     @Autowired
     private ExercicioService es;
 
-    @GetMapping
-    public Iterable<Exercicio> listar(){
+    @GetMapping("/{idExercicio}")
+    public ResponseEntity<?> listar(@PathVariable Long idExercicio){
 
-        return es.listar();
-
+        return es.listar(idExercicio);
+        
     }
-    
+
     @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody Exercicio ex) {
 
