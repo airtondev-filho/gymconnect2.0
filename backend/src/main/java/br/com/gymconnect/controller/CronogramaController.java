@@ -25,9 +25,9 @@ public class CronogramaController {
     private CronogramaService cs;
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@RequestBody Cronograma cronograma, Long idAluno){
+    public ResponseEntity<?> cadastrar(@RequestBody Cronograma cronograma){
 
-        return cs.cadastrar(cronograma, idAluno);
+        return cs.cadastrar(cronograma);
     }
 
     @DeleteMapping("/{idCronograma}")

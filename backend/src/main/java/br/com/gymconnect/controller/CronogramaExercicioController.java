@@ -24,9 +24,9 @@ public class CronogramaExercicioController {
     private CronogramaExercicioService ces;
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@RequestBody CronogramaExercicio cronogExerc, Long idCronograma, Long idExercicio) {
+    public ResponseEntity<?> cadastrar(@RequestBody CronogramaExercicio cronogExerc) {
 
-        return ces.cadastrar(cronogExerc, idCronograma, idExercicio);
+        return ces.cadastrar(cronogExerc);
 
     }
 

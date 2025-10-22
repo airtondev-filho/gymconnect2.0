@@ -2,6 +2,8 @@ package br.com.gymconnect.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,5 +37,6 @@ public class Cronograma {
     private Integer diasTotais;
 
     @OneToMany(mappedBy="cronograma", cascade= CascadeType.ALL, orphanRemoval=true)    
+    @JsonManagedReference
     private List<CronogramaExercicio> exercicio;
 }

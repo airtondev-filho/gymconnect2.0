@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import br.com.gymconnect.model.Cronograma;
 import br.com.gymconnect.model.CronogramaExercicio;
@@ -30,11 +31,15 @@ public class CronogramaExercicioService {
     @Autowired
     private ExercicioRepository exr;
 
-    public ResponseEntity<?> cadastrar(CronogramaExercicio cronogExerc, Long idCronograma, long idExercicio){
+    public ResponseEntity<?> cadastrar(@RequestBody CronogramaExercicio cronogExerc){
 
         ResponseModel rm = new ResponseModel();
     
-        Optional<Cronograma> cronogramaOpt = cr.findById(idCronograma);    
+        Long cronograma = cronogExerc.getCronograma().getIdCronograma();
+        
+        Long exercicio = cronogExerc.getExercicio().getIdExercicio();
+
+        Optional<Cronograma> cronogramaOpt = cr.findById(cronograma);    
 
         if (cronogramaOpt.isEmpty()) {
             
@@ -43,7 +48,7 @@ public class CronogramaExercicioService {
 
         } 
 
-        Optional<Exercicio> exercicioOpt = exr.findById(idExercicio);
+        Optional<Exercicio> exercicioOpt = exr.findById(exercicio);
 
         if (exercicioOpt.isEmpty()) {
             

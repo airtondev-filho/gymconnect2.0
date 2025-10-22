@@ -1,5 +1,7 @@
 package br.com.gymconnect.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,6 +29,7 @@ public class CronogramaExercicio {
 
     @ManyToOne
     @JoinColumn(name="id_cronograma", nullable=false)
+    @JsonBackReference
     private Cronograma cronograma;
 
     @ManyToOne
