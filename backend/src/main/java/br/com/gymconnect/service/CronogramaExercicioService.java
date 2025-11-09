@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import br.com.gymconnect.model.Cronograma;
 import br.com.gymconnect.model.CronogramaExercicio;
@@ -31,7 +30,7 @@ public class CronogramaExercicioService {
     @Autowired
     private ExercicioRepository exr;
 
-    public ResponseEntity<?> cadastrar(@RequestBody CronogramaExercicio cronogExerc){
+    public ResponseEntity<?> cadastrar(CronogramaExercicio cronogExerc){
 
         ResponseModel rm = new ResponseModel();
     
