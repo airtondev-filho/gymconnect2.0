@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.gymconnect.infra.security.TokenService;
 import br.com.gymconnect.model.AutorizationDTO;
 import br.com.gymconnect.model.CadastrarDTO;
+import br.com.gymconnect.model.LoginResponseDTO;
 import br.com.gymconnect.model.Usuario;
 import br.com.gymconnect.repository.UsuarioRepository;
-
 
 @RestController
 @RequestMapping("auth") 
@@ -27,6 +28,9 @@ public class AuthenticatedController {
     private AuthenticationManager authenticationManager;
     
     @Autowired
+    private TokenService tokenService;
+
+    @Autowired
     private UsuarioRepository ur;
 
     @PostMapping("/login")
@@ -34,7 +38,9 @@ public class AuthenticatedController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((Usuario) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/cadastrar")
