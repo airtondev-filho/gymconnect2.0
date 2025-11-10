@@ -25,7 +25,7 @@ public class ExercicioController {
     @Autowired
     private ExercicioService es;
 
-    @GetMapping("/{idExercicio}")
+    @GetMapping
     public ResponseEntity<?> listar(@PathVariable Long idExercicio){
 
         return es.listar(idExercicio);
