@@ -43,19 +43,18 @@ public class ExercicioService {
         return new ResponseEntity<ResponseModel>(rm, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> listar(Long idExercicio){
+    public ResponseEntity<?> listar() {
 
-        ResponseModel rm = new ResponseModel();
+        List<Exercicio> exercicios = er.findAll();
 
-        Optional<Exercicio> exercicioOpt = er.findById(idExercicio);
-
-        if (exercicioOpt.isEmpty()) {
-            rm.setMensagem("Exercicio não encontrado!");
+        if (exercicios.isEmpty()) {
+            ResponseModel rm = new ResponseModel();
+            rm.setMensagem("Nenhum exercício encontrado!");
             return new ResponseEntity<ResponseModel>(rm, HttpStatus.NOT_FOUND);
         }
 
-        List<Exercicio> exercicios = er.findByIdExercicio(idExercicio);
         return ResponseEntity.ok(exercicios);
     }
+
     
 }
