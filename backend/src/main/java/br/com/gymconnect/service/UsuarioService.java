@@ -1,7 +1,5 @@
 package br.com.gymconnect.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +26,7 @@ public class UsuarioService {
         ur.deleteById(idUsuario);
 
         rm.setMensagem("O Usuario foi removido com sucesso!");
-        return new ResponseEntity<ResponseModel>(rm, HttpStatus.OK);
+        return new ResponseEntity<>(rm, HttpStatus.OK);
     }
 
 }

@@ -1,7 +1,6 @@
 package br.com.gymconnect.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,12 +24,12 @@ public class ExercicioService {
 
         if (ex.getNome().equals("")) {
             rm.setMensagem("O campo nome exercicio precisa ser preenchido!");
-            return new ResponseEntity<ResponseModel>(rm, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(rm, HttpStatus.BAD_REQUEST);
         } else if (ex.getLinkYoutube() == null || ex.getLinkYoutube().isBlank()) {
             rm.setMensagem("O campo Link não foi preenchido!");
-            return new ResponseEntity<ResponseModel>(rm, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(rm, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<Exercicio>(er.save(ex), HttpStatus.OK);
+            return new ResponseEntity<>(er.save(ex), HttpStatus.OK);
         }
 
     }
@@ -40,7 +39,7 @@ public class ExercicioService {
         er.deleteById(idExercicio);
         
         rm.setMensagem("Exercicio deletado");
-        return new ResponseEntity<ResponseModel>(rm, HttpStatus.OK);
+        return new ResponseEntity<>(rm, HttpStatus.OK);
     }
 
     public ResponseEntity<?> listar() {
@@ -50,7 +49,7 @@ public class ExercicioService {
         if (exercicios.isEmpty()) {
             ResponseModel rm = new ResponseModel();
             rm.setMensagem("Nenhum exercício encontrado!");
-            return new ResponseEntity<ResponseModel>(rm, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(rm, HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.ok(exercicios);
