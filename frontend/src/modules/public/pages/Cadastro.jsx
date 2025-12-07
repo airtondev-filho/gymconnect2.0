@@ -1,130 +1,131 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import styles from "./styles.module.css";
-import Title from "./Title.jsx";
 
 export default function Cadastro() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [tipo, setTipo] = useState("aluno");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { cadastrar, login } = useAuth();
+  const [confirmaSenha, setConfirmaSenha] = useState("");
+  const [tipo, setTipo] = useState("ALUNO");
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const { cadastrar } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
+    setErro("");
 
-    const tipoUsuario = tipo === "cliente" ? "CLIENTE" : "ALUNO";
-
-    const result = await cadastrar(nome, email, senha, tipoUsuario);
-
-    if (result.success) {
-      setSuccess("Conta criada com sucesso! Fazendo login...");
-
-      try {
-        const loginResult = await login(email, senha);
-        if (loginResult.success) {
-          if (loginResult.user.tipo === "CLIENTE") {
-            navigate("/home-cliente");
-          } else {
-            navigate("/home-aluno");
-          }
-        } else {
-          setSuccess("Conta criada com sucesso! Redirecionando para login...");
-          setTimeout(() => {
-            navigate("/login");
-          }, 2000);
-        }
-      } catch (loginError) {
-        setSuccess("Conta criada com sucesso! Redirecionando para login...");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      }
-    } else {
-      setError(result.error || "Erro ao cadastrar");
+    if (senha !== confirmaSenha) {
+      setErro("Senhas não conferem");
+      return;
+    }
+    if (senha.length < 6) {
+      setErro("Senha deve ter no mínimo 6 caracteres");
+      return;
     }
 
-    setLoading(false);
+    setCarregando(true);
+    const resultado = await cadastrar(nome, email, senha, tipo);
+
+    if (resultado.success) {
+      navigate("/login");
+    } else {
+      setErro(resultado.error || "Erro ao cadastrar");
+    }
+    setCarregando(false);
   };
 
   return (
-    <div className={styles.container}>
-      <Title />
-      <form className={styles.formCard} onSubmit={handleSubmit}>
-        <div>
-          <h2>Criar Conta</h2>
-          <p>Preencha os dados para criar sua conta</p>
+    <div className={styles.authContainer}>
+      <div className={styles.authCard}>
+        {/* Header Preto com Logo - PADRÃO LANDING */}
+        <div className={styles.authHeader}>
+          <img src="/image/LOGO ACADEMIA BRANCO.png" alt="GymConnect" className={styles.authLogoImage} />
         </div>
-        {error && (
-          <div style={{ color: "red", marginBottom: "1rem" }}>{error}</div>
-        )}
-        {success && (
-          <div style={{ color: "green", marginBottom: "1rem" }}>{success}</div>
-        )}
-        <div>
-          <label htmlFor="tipo">Tipo de conta</label>
-          <select
-            id="tipo"
-            value={tipo}
-            onChange={(e) => setTipo(e.target.value)}
-            disabled={loading}
-          >
-            <option value="cliente">Academia</option>
-            <option value="aluno">Aluno</option>
-          </select>
+
+        {/* Conteúdo do Card */}
+        <div className={styles.authContent}>
+          <h1>Cadastro</h1>
+          <p>Crie sua conta para começar</p>
+
+          {erro && <div className={styles.errorMessage}>{erro}</div>}
+
+          <form className={styles.authForm} onSubmit={handleSubmit}>
+            <div className={styles.formGroup}>
+              <label>Nome Completo</label>
+              <input
+                type="text"
+                placeholder="João Silva"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+                disabled={carregando}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={carregando}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Tipo de Conta</label>
+              <select 
+                value={tipo} 
+                onChange={(e) => setTipo(e.target.value)}
+                required
+                disabled={carregando}
+              >
+                <option value="ALUNO">Aluno</option>
+                <option value="CLIENTE">Personal Trainer / Admin</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Senha</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+                disabled={carregando}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Confirmar Senha</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={confirmaSenha}
+                onChange={(e) => setConfirmaSenha(e.target.value)}
+                required
+                disabled={carregando}
+              />
+            </div>
+            <button type="submit" className={styles.btnPrimaryFull} disabled={carregando}>
+              {carregando ? "Cadastrando..." : "Cadastrar"}
+            </button>
+          </form>
+
+          <div className={styles.authFooter}>
+            <p>
+              Já tem conta?
+              <Link to="/login"> Faça login</Link>
+            </p>
+            <p>
+              <Link to="/"> ← Voltar para início</Link>
+            </p>
+          </div>
         </div>
-        <div>
-          <label htmlFor="nome">Nome</label>
-          <input
-            type="text"
-            id="nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label htmlFor="senha">Senha</label>
-          <input
-            type="password"
-            id="senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-        <button
-          type="submit"
-          className={styles.btnEstilizado}
-          disabled={loading}
-        >
-          {loading ? "Criando conta..." : "Criar Conta"}
-        </button>
-        <p style={{ marginTop: "1rem", textAlign: "center" }}>
-          Já tem uma conta? <a href="/login">Faça login</a>
-        </p>
-      </form>
+      </div>
     </div>
   );
 }

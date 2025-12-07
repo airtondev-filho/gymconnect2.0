@@ -1,70 +1,600 @@
-.container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-h2 {
-  font-size: 17px;
-  font-weight: 500;
-  color: rgb(77, 77, 77);
-}
-button {
-  cursor: pointer;
-  background-color: #ffffff;
-  padding: 0.2rem 5rem;
-  border-color: #ffffff;
-  border-radius: 0.5rem;
-  margin: 1rem 0.1rem;
+:root {
+  --primary-color: #ffd700;
+  --secondary-color: #000;
+  --text-color: #1a1a1a;
+  --light-bg: #f9f9f9;
+  --white: #fff;
+  --border-color: #e0e0e0;
+  --success: #10b981;
 }
 
-button:hover {
-  background-color: #e0e0e0;
-}
-button:active {
-  background-color: rgb(255, 215, 0);
-  border-color: rgb(255, 215, 0);
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--text-color);
+  background: #fff9ea;
+  line-height: 1.6;
 }
 
-form {
-  border-radius: 0.75rem;
-  background-color: #ffffff;
-  padding: 2rem 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.landingPage {
   width: 100%;
-  max-width: 400px;
+}
+
+/* Header */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  background: #000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  height: 50px;
+  width: auto;
+}
+
+.logoIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--primary-color);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.highlight {
+  color: var(--primary-color);
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navLinks a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.navLinks a:hover {
+  color: var(--primary-color);
+}
+
+.navButtons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btnLogin {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+}
+
+.btnLogin:hover {
+  background: #fff;
+  color: #000;
+}
+
+.btnRegister {
+  background: var(--primary-color);
+  color: #000;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btnRegister:hover {
+  background: #ffed4e;
+}
+
+/* Buttons */
+.btnPrimary {
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.btnPrimary:hover {
+  background: #ffed4e;
+}
+
+.btnPrimaryFull {
+  width: 100%;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.btnPrimaryFull:hover {
+  background: #ffed4e;
+}
+
+.btnSecondary {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.75rem 2rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btnSecondary:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Hero - PADRÃO 1200px */
+.hero {
+  margin-top: 5rem;
+  padding: 4rem 2rem;
+  background: #fff9ea;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroContent h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  color: #1a1a1a
+}
+
+.heroContent p {
+  font-size: 1.125rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.heroButtons {
+  display: flex;
   gap: 1rem;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.3rem;
+.heroImage img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 0.5rem;
 }
 
-input,
-select {
-  display: block;
+/* Sections - PADRÃO 1200px */
+.about,
+.services {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about {
+  background: #fff9ea;
+}
+
+.services {
+  background: #fff9ea;
+}
+
+.about h2,
+.services h2 {
+  font-size: 2.25rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.aboutContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.aboutText p {
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+  color: #666;
+  line-height: 1.8;
+}
+
+.aboutImage img {
   width: 100%;
-  padding: 0.2rem;
+  height: 400px;
+  object-fit: cover;
   border-radius: 0.5rem;
-  background-color: #eeeeee;
-  border-color: #f5f5f5;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.serviceCard {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.serviceCard:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.serviceIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.serviceCard p {
+  color: #666;
+}
+
+/* Contact - PADRÃO 1200px (max 600px centralizado) */
+.contact {
+  padding: 4rem 2rem;
+  background: #fff9ea;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.contact h2 {
+  font-size: 2.25rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
   font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
 }
-input:focus {
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
   outline: none;
-  border-color: rgb(255, 215, 0);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
-.btnEstilizado,
-.btnEstilizado:active,
-.btnEstilizado:hover {
-  background-color: rgb(255, 215, 0);
-  border-color: rgb(255, 215, 0);
-  font-weight: 400;
-  padding: 0.5rem 1.2rem;
+
+/* Footer - PADRÃO 1200px */
+.footer {
+  background: #1a1a1a;
+  color: var(--white);
+  padding: 3rem 2rem;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footerSection h3,
+.footerSection h4 {
+  margin-bottom: 1rem;
+}
+
+.footerSection ul {
+  list-style: none;
+}
+
+.footerSection li {
+  margin-bottom: 0.5rem;
+}
+
+.footerSection a {
+  color: #999;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerSection a:hover {
+  color: var(--primary-color);
+}
+
+.footerBottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid #333;
+  text-align: center;
+  color: #999;
+}
+
+/* Auth Container - PADRÃO 1200px COM CARD CENTRALIZADO */
+.authContainer {
+  min-height: 100vh;
+  background: #fff9ea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.authCard {
+  background: var(--white);
   border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  overflow: hidden;
+}
+
+/* Header Preto Dentro do Card - PADRÃO LANDING */
+.authHeader {
+  background: #000;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authLogoImage {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Conteúdo do Card */
+.authContent {
+  padding: 2rem;
+}
+
+.authLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.authCard h1 {
+  font-size: 1.875rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.authContent > p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.authFooter {
+  text-align: center;
+  color: #666;
+}
+
+.authFooter p {
+  margin-bottom: 0.5rem;
+}
+
+.authFooter a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.authFooter a:hover {
+  text-decoration: underline;
+}
+
+.errorMessage {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #c33;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .aboutContent {
+    grid-template-columns: 1fr;
+  }
+
+  .navLinks {
+    display: none;
+  }
+}
+
+/* Carousel Styles */
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  background: transparent;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  background: transparent;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 10;
+}
+
+.slideImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Carousel Navigation Buttons */
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 215, 0, 0.8);
+  color: #000;
+  border: none;
+  padding: 12px 16px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  z-index: 20;
+}
+
+.carouselBtn:hover {
+  background-color: #ffd700;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prevBtn {
+  left: 12px;
+}
+
+.nextBtn {
+  right: 12px;
+}
+
+/* Carousel Indicators */
+.indicators {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 20;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.activeDot {
+  background-color: #ffd700;
+  width: 32px;
+  border-radius: 6px;
 }

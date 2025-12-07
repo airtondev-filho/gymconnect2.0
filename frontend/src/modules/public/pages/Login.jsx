@@ -1,81 +1,85 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import styles from "./styles.module.css";
-import Title from "./Title.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    setErro("");
+    setCarregando(true);
 
-    const result = await login(email, senha);
+    const resultado = await login(email, senha);
 
-    if (result.success) {
-      if (result.user.tipo === "CLIENTE") {
-        navigate("/home-cliente");
-      } else {
-        navigate("/home-aluno");
-      }
+    if (resultado.success) {
+      navigate(resultado.user.tipo === "CLIENTE" ? "/home-cliente" : "/home-aluno");
     } else {
-      setError(result.error || "Erro ao fazer login");
+      setErro(resultado.error || "Erro ao fazer login");
     }
-
-    setLoading(false);
+    setCarregando(false);
   };
 
   return (
-    <div className={styles.container}>
-      <Title />
-      <form onSubmit={handleSubmit}>
-        <div>
-          <h2>Fazer Login</h2>
-          <p>Entre com suas credenciais para acessar sua conta</p>
+    <div className={styles.authContainer}>
+      <div className={styles.authCard}>
+        {/* Header Preto com Logo - PADRÃO LANDING */}
+        <div className={styles.authHeader}>
+          <img src="/image/LOGO ACADEMIA BRANCO.png" alt="GymConnect" className={styles.authLogoImage} />
         </div>
-        {error && (
-          <div style={{ color: "red", marginBottom: "1rem" }}>{error}</div>
-        )}
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-          />
+
+        {/* Conteúdo do Card */}
+        <div className={styles.authContent}>
+          <h1>Bem-vindo</h1>
+          <p>Faça login para acessar sua conta</p>
+
+          {erro && <div className={styles.errorMessage}>{erro}</div>}
+
+          <form className={styles.authForm} onSubmit={handleSubmit}>
+            <div className={styles.formGroup}>
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={carregando}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Senha</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+                disabled={carregando}
+              />
+            </div>
+            <button type="submit" className={styles.btnPrimaryFull} disabled={carregando}>
+              {carregando ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+
+          <div className={styles.authFooter}>
+            <p>
+              Não tem conta?
+              <Link to="/cadastro"> Cadastre-se</Link>
+            </p>
+            <p>
+              <Link to="/"> ← Voltar para início</Link>
+            </p>
+          </div>
         </div>
-        <div>
-          <label htmlFor="senha">Senha</label>
-          <input
-            type="password"
-            id="senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-        <button
-          type="submit"
-          className={styles.btnEstilizado}
-          disabled={loading}
-        >
-          {loading ? "Entrando..." : "Login"}
-        </button>
-        <p style={{ marginTop: "1rem", textAlign: "center" }}>
-          Não tem uma conta? <a href="/cadastro">Cadastre-se</a>
-        </p>
-      </form>
+      </div>
     </div>
   );
 }

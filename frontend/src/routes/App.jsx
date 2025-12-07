@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "../context/AuthContext";
+import Landing from "../modules/public/pages/Landing";
 import Login from "../modules/public/pages/Login";
 import Cadastro from "../modules/public/pages/Cadastro";
 import HomeCliente from "../modules/cliente/pages/HomeCliente";
@@ -7,54 +8,27 @@ import HomeAluno from "../modules/aluno/pages/HomeAluno";
 
 function ProtectedClienteRoute({ children }) {
   const { isCliente, loading, isAuthenticated } = useAuth();
-
-  if (loading) {
-    return <div>Carregando...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!isCliente()) {
-    return <Navigate to="/home-aluno" replace />;
-  }
-
+  if (loading) return <div>Carregando...</div>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isCliente()) return <Navigate to="/home-aluno" replace />;
   return children;
 }
 
 function ProtectedAlunoRoute({ children }) {
   const { isAluno, loading, isAuthenticated } = useAuth();
-
-  if (loading) {
-    return <div>Carregando...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!isAluno()) {
-    return <Navigate to="/home-cliente" replace />;
-  }
-
+  if (loading) return <div>Carregando...</div>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAluno()) return <Navigate to="/home-cliente" replace />;
   return children;
 }
 
 function PublicRoute({ children }) {
   const { isAuthenticated, loading, user } = useAuth();
-
-  if (loading) {
-    return <div>Carregando...</div>;
-  }
-
+  if (loading) return <div>Carregando...</div>;
   if (isAuthenticated && user) {
     const isCliente = user.tipo === "CLIENTE";
-    return (
-      <Navigate to={isCliente ? "/home-cliente" : "/home-aluno"} replace />
-    );
+    return <Navigate to={isCliente ? "/home-cliente" : "/home-aluno"} replace />;
   }
-
   return children;
 }
 
@@ -66,7 +40,7 @@ function AppRoutes() {
           path="/"
           element={
             <PublicRoute>
-              <Login />
+              <Landing />
             </PublicRoute>
           }
         />

@@ -3,158 +3,157 @@ import { useAuth } from "../../../context/AuthContext";
 import { cronogramaExercicioAPI } from "../../../services/api";
 import styles from "./styles.module.css";
 
+const DAYS = ["SEGUNDA", "TERCA", "QUARTA", "QUINTA", "SEXTA", "SABADO", "DOMINGO"];
+
+// Função para extrair ID do vídeo do YouTube
+const getYouTubeVideoId = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+};
+
 export default function HomeAluno() {
   const { user, logout } = useAuth();
-  const [mostrarTreino, setMostrarTreino] = useState(false);
-  const [treinos, setTreinos] = useState([]);
-  const [treinoSelecionado, setTreinoSelecionado] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
 
   useEffect(() => {
-    if (user?.idUsuario) {
-      carregarTreinos();
-    }
-  }, [user]);
+    carregarTreinos();
+  }, []);
 
-  async function carregarTreinos() {
+  const carregarTreinos = async () => {
     try {
-      setLoading(true);
-      setError("");
-
-      const exercicios = await cronogramaExercicioAPI.listarPorAluno(
-        user.idUsuario
-      );
-
-      if (!exercicios || exercicios.length === 0) {
-        setTreinos([]);
-        return;
-      }
-
-      const treinosPorDia = exercicios.reduce((acc, ex) => {
-        if (!ex || !ex.exercicio) return acc;
-
-        let dia = "Sem dia";
-        if (ex.diaSemana) {
-          if (typeof ex.diaSemana === "string") dia = ex.diaSemana;
-          else if (ex.diaSemana.name) dia = ex.diaSemana.name;
-          else dia = String(ex.diaSemana);
+      const uid = user?.idUsuario || user?.id;
+      if (!uid) return;
+      const dados = await cronogramaExercicioAPI.listarPorAluno(uid);
+      
+      // Agrupar por cronograma
+      const cronogramas = {};
+      dados.forEach((item) => {
+        const cronogramaId = item.cronograma?.idCronograma;
+        if (!cronogramas[cronogramaId]) {
+          cronogramas[cronogramaId] = {
+            id: cronogramaId,
+            nome: `Treino ${Object.keys(cronogramas).length + 1}`,
+            exercicios: []
+          };
         }
-
-        if (!acc[dia]) acc[dia] = [];
-
-        acc[dia].push({
-          id: ex.idCronogramaExercicio,
-          nome: ex.exercicio.nome || "Exercício sem nome",
-          series: ex.serie,
-          repeticoes: ex.repeticao,
-          carga: ex.carga,
-          videoUrl: ex.exercicio.linkYoutube,
+        cronogramas[cronogramaId].exercicios.push({
+          id: item.idCronogramaExercicio,
+          nome: item.exercicio?.nome || "Exercício",
+          videoUrl: item.exercicio?.linkYoutube || "",
+          series: item.serie,
+          repeticoes: item.repeticao,
+          diaSemana: item.diaSemana
         });
-
-        return acc;
-      }, {});
-
-      const treinosLista = Object.keys(treinosPorDia).map((dia) => ({
-        id: `treino-${dia}`,
-        diaSemana: dia,
-        exercicios: treinosPorDia[dia],
-        nomeTreino: `Treino - ${dia}`,
-      }));
-
-      setTreinos(treinosLista);
-    } catch (err) {
-      setError("Erro ao carregar treinos: " + err.message);
+      });
+      
+      setWorkouts(Object.values(cronogramas));
+      if (Object.values(cronogramas).length > 0) {
+        setSelectedWorkout(Object.values(cronogramas)[0]);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar treinos:", error);
     } finally {
       setLoading(false);
     }
-  }
-
-  function abrirModelTreino(t) {
-    setTreinoSelecionado(t);
-    setMostrarTreino(true);
-  }
-
-  function fecharModal() {
-    setMostrarTreino(false);
-    setTreinoSelecionado(null);
-  }
+  };
 
   return (
-    <div>
-      <div className={styles.navbar}>
-        <h1>GymConnect</h1>
-        <button
-          onClick={logout}
-          style={{
-            padding: "0.5rem 1rem",
-            background: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
+    <div className={styles.container}>
+      {/* Header */}
+      <header className={styles.header}>
+        <div className={styles.logoContainer}>
+          <img 
+            src="/image/LOGO ACADEMIA BRANCO.png" 
+            alt="GymConnect" 
+            className={styles.logo}
+          />
+        </div>
+        <button className={styles.btnSair} onClick={logout}>
           Sair
         </button>
-      </div>
+      </header>
 
-      <div className={styles.title}>
-        <h2>Olá, {user?.nome || "Aluno"}</h2>
-        <p>Seus treinos personalizados estão prontos</p>
-      </div>
+      {/* Main Content */}
+      <main className={styles.main}>
+        <h1 className={styles.pageTitle}>Meu Painel</h1>
+        <p className={styles.welcomeText}>Bem-vindo, {user?.nome}</p>
 
-      <span>Cronograma semanal</span>
-
-      {error && (
-        <div style={{ color: "red", marginBottom: "1rem" }}>{error}</div>
-      )}
-
-      {loading ? (
-        <p>Carregando treinos...</p>
-      ) : treinos.length === 0 ? (
-        <p>Nenhum treino cadastrado ainda.</p>
-      ) : (
-        <ul className={styles.diasTreinos}>
-          {treinos.map((t) => (
-            <li key={t.id} className={styles.treinoCard}>
-              <h3>{t.diaSemana}</h3>
-              <p>{t.exercicios.length} exercício(s)</p>
-              <button onClick={() => abrirModelTreino(t)}>Treinar</button>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {mostrarTreino && treinoSelecionado && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContainer}>
-            <h2>{treinoSelecionado.nomeTreino}</h2>
-            <p>{treinoSelecionado.diaSemana}</p>
-
-            {treinoSelecionado.exercicios?.map((ex, index) => (
-              <div key={index} className={styles.exercicioCard}>
-                <h3>{ex.nome}</h3>
-                <p>
-                  {ex.series && `${ex.series} séries`}
-                  {ex.repeticoes && ` × ${ex.repeticoes} repetições`}
-                  {ex.carga && ` • Carga: ${ex.carga}kg`}
-                </p>
-
-                {ex.videoUrl && (
-                  <button onClick={() => window.open(ex.videoUrl, "_blank")}>
-                    Ver Vídeo
-                  </button>
-                )}
-              </div>
-            ))}
-
-            <button onClick={fecharModal} className={styles.btnFechar}>
-              Fechar
-            </button>
+        {/* Stats Cards */}
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <h3 className={styles.statLabel}>Treino Atual</h3>
+            <p className={styles.statValue}>{selectedWorkout?.nome || "--"}</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3 className={styles.statLabel}>Próximo Treino</h3>
+            <p className={styles.statValue}>--</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3 className={styles.statLabel}>Progresso Total</h3>
+            <p className={styles.statValue}>0%</p>
           </div>
         </div>
-      )}
+
+        {/* Workout Details */}
+        {loading ? (
+          <p>Carregando treinos...</p>
+        ) : selectedWorkout ? (
+          <div className={styles.workoutSection}>
+            <h2 className={styles.sectionTitle}>Meu Treino</h2>
+            <div className={styles.workoutCard}>
+              <div className={styles.workoutHeader}>
+                <h3>{selectedWorkout.nome}</h3>
+                <p className={styles.workoutDesc}>
+                  Foco em exercícios compostos para ganho de força
+                </p>
+              </div>
+
+              <h4 className={styles.exercisesTitle}>Exercícios</h4>
+              <div className={styles.exercisesList}>
+                {selectedWorkout.exercicios.map((exercise) => {
+                  const videoId = getYouTubeVideoId(exercise.videoUrl);
+                  return (
+                    <div key={exercise.id} className={styles.exerciseItem}>
+                      <div className={styles.exerciseInfo}>
+                        <h5 className={styles.exerciseName}>{exercise.nome}</h5>
+                        <p className={styles.exerciseDetails}>
+                          {exercise.series} séries de {exercise.repeticoes}
+                        </p>
+                      </div>
+                      <div className={styles.exerciseVideo}>
+                        {videoId ? (
+                          <iframe
+                            width="100%"
+                            height="200"
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title={exercise.nome}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        ) : (
+                          <div className={styles.noVideo}>
+                            <span>▶</span>
+                            <p>Vídeo não disponível</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button className={styles.btnMarcar}>Marcar</button>
+            </div>
+          </div>
+        ) : (
+          <p>Nenhum treino atribuído</p>
+        )}
+      </main>
     </div>
   );
 }
