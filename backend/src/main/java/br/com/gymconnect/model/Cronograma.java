@@ -21,22 +21,25 @@ import lombok.Setter;
 @Setter
 
 @Entity
-@Table(name="cronograma")
+@Table(name = "cronograma")
 public class Cronograma {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id_cronograma")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cronograma")
     private Long idCronograma;
 
+    @Column(name = "nome", length = 150)
+    private String nome;
+
     @ManyToOne
-    @JoinColumn(name="id_aluno", nullable=false)
+    @JoinColumn(name = "id_aluno", nullable = false)
     private Usuario aluno;
 
-    @Column(name="dias_totais", nullable=true)
+    @Column(name = "dias_totais", nullable = true)
     private Integer diasTotais;
 
-    @OneToMany(mappedBy="cronograma", cascade= CascadeType.ALL, orphanRemoval=true)    
+    @OneToMany(mappedBy = "cronograma", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<CronogramaExercicio> exercicio;
 }

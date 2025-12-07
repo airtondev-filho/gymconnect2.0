@@ -57,6 +57,11 @@ public class CronogramaService {
         return new ResponseEntity<>(rm, HttpStatus.OK);
     }
 
+    public ResponseEntity<?> listarTodos() {
+    List<Cronograma> cronogramas = cr.findAll();
+    return ResponseEntity.ok(cronogramas);
+}
+
     public ResponseEntity<?> listar(Long idAluno) {
 
         ResponseModel rm = new ResponseModel();

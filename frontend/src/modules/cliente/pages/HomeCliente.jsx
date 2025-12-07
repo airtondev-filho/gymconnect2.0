@@ -25,16 +25,12 @@ export default function HomeCliente() {
     tipo: "ALUNO"
   });
 
-  // Form Treino
   const [workoutForm, setWorkoutForm] = useState({
     alunoId: "",
+    nome: "",
     diasTotais: "",
     exercicios: []
   });
-
-  useEffect(() => {
-    carregarDados();
-  }, []);
 
   const carregarDados = async () => {
     try {
@@ -159,6 +155,7 @@ export default function HomeCliente() {
 
     try {
       const cronograma = {
+        nome: workoutForm.nome,
         aluno: { idUsuario: parseInt(workoutForm.alunoId) },
         diasTotais: workoutForm.diasTotais ? parseInt(workoutForm.diasTotais) : null,
         exercicio: workoutForm.exercicios.map(ex => ({
@@ -173,7 +170,7 @@ export default function HomeCliente() {
       await cronogramaAPI.cadastrar(cronograma);
       alert("Treino criado com sucesso!");
       setShowCreateWorkoutModal(false);
-      setWorkoutForm({ alunoId: "", diasTotais: "", exercicios: [] });
+      setWorkoutForm({ alunoId: "", nome: "", diasTotais: "", exercicios: [] });
       carregarDados();
     } catch (error) {
       console.error("Erro ao criar treino:", error);
@@ -370,7 +367,7 @@ export default function HomeCliente() {
                 ) : (
                   workouts.map((workout) => (
                     <tr key={workout.idCronograma}>
-                      <td>Treino de Força - Nível {workout.idCronograma}</td>
+                      <td>{workout.nome || `Treino ${workout.idCronograma}`}</td>
                       <td>1</td>
                       <td>
                         <div className={styles.actionButtons}>
@@ -512,6 +509,17 @@ export default function HomeCliente() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Nome do Treino</label>
+                <input
+                  type="text"
+                  value={workoutForm.nome}
+                  onChange={(e) => setWorkoutForm({ ...workoutForm, nome: e.target.value })}
+                  placeholder="Ex: Treino de Hipertrofia"
+                  required
+                />
               </div>
 
               <div className={styles.formGroup}>

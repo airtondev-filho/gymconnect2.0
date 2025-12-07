@@ -603,3 +603,43 @@
   color: #c33;
   text-align: center;
 }
+
+.exerciseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.btnCheck {
+  padding: 0.5rem 1rem;
+  border: 2px solid #ffd700;
+  background: transparent;
+  color: #ffd700;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btnCheck:hover {
+  background: #ffd700;
+  color: #000;
+}
+
+.btnCheck.checked {
+  background: #28a745;
+  border-color: #28a745;
+  color: #fff;
+}
+
+.exerciseItem.completed {
+  opacity: 0.6;
+  background: #f0f9f0;
+}
+
+.exerciseItem.completed .exerciseName {
+  text-decoration: line-through;
+}

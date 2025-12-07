@@ -8,19 +8,32 @@ const DAYS = ["SEGUNDA", "TERCA", "QUARTA", "QUINTA", "SEXTA", "SABADO", "DOMING
 // Função para extrair ID do vídeo do YouTube
 const getYouTubeVideoId = (url) => {
   if (!url) return null;
+  
+  // Para YouTube Shorts
+  if (url.includes('/shorts/')) {
+    const match = url.match(/\/shorts\/([^?&]+)/);
+    return match ? match[1] : null;
+  }
+  
+  // Para URLs normais do YouTube
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
 };
-
 export default function HomeAluno() {
   const { user, logout } = useAuth();
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+  const [completedExercises, setCompletedExercises] = useState({});
 
   useEffect(() => {
     carregarTreinos();
+    // Carregar exercícios concluídos do localStorage
+    const saved = localStorage.getItem(`completed_${user?.idUsuario}`);
+    if (saved) {
+      setCompletedExercises(JSON.parse(saved));
+    }
   }, []);
 
   const carregarTreinos = async () => {
@@ -46,6 +59,7 @@ export default function HomeAluno() {
           videoUrl: item.exercicio?.linkYoutube || "",
           series: item.serie,
           repeticoes: item.repeticao,
+          carga: item.carga,
           diaSemana: item.diaSemana
         });
       });
@@ -61,20 +75,32 @@ export default function HomeAluno() {
     }
   };
 
+  const handleToggleExercise = (exerciseId) => {
+    const newCompleted = {
+      ...completedExercises,
+      [exerciseId]: !completedExercises[exerciseId]
+    };
+    setCompletedExercises(newCompleted);
+    // Salvar no localStorage
+    localStorage.setItem(`completed_${user?.idUsuario}`, JSON.stringify(newCompleted));
+  };
+
   return (
     <div className={styles.container}>
-      {/* Header */}
+      {/* Header com Botão Sair */}
       <header className={styles.header}>
-        <div className={styles.logoContainer}>
-          <img 
-            src="/image/LOGO ACADEMIA BRANCO.png" 
-            alt="GymConnect" 
-            className={styles.logo}
-          />
+        <div className={styles.navbar}>
+          <div className={styles.logo}>
+            <img 
+              src="/image/LOGO ACADEMIA BRANCO.png" 
+              alt="GymConnect" 
+              className={styles.logoImage}
+            />
+          </div>
+          <button className={styles.btnSair} onClick={logout}>
+            Sair
+          </button>
         </div>
-        <button className={styles.btnSair} onClick={logout}>
-          Sair
-        </button>
       </header>
 
       {/* Main Content */}
@@ -116,12 +142,27 @@ export default function HomeAluno() {
               <div className={styles.exercisesList}>
                 {selectedWorkout.exercicios.map((exercise) => {
                   const videoId = getYouTubeVideoId(exercise.videoUrl);
+                  const isCompleted = completedExercises[exercise.id];
+                  
                   return (
-                    <div key={exercise.id} className={styles.exerciseItem}>
+                    <div 
+                      key={exercise.id} 
+                      className={`${styles.exerciseItem} ${isCompleted ? styles.completed : ''}`}
+                    >
                       <div className={styles.exerciseInfo}>
-                        <h5 className={styles.exerciseName}>{exercise.nome}</h5>
+                        <div className={styles.exerciseHeader}>
+                          <h5 className={styles.exerciseName}>{exercise.nome}</h5>
+                          <button
+                            className={`${styles.btnCheck} ${isCompleted ? styles.checked : ''}`}
+                            onClick={() => handleToggleExercise(exercise.id)}
+                            title={isCompleted ? "Marcar como não concluído" : "Marcar como concluído"}
+                          >
+                            {isCompleted ? "✓ Concluído" : "Marcar Concluído"}
+                          </button>
+                        </div>
                         <p className={styles.exerciseDetails}>
-                          {exercise.series} séries de {exercise.repeticoes}
+                          {exercise.series} séries de {exercise.repeticoes} repetições
+                          {exercise.carga > 0 && ` - ${exercise.carga}kg`}
                         </p>
                       </div>
                       <div className={styles.exerciseVideo}>

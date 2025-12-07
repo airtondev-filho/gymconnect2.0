@@ -14,30 +14,33 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.gymconnect.model.Cronograma;
 import br.com.gymconnect.service.CronogramaService;
 
-
-
 @RestController
 @RequestMapping("/cronograma")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost"})
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost:3000", "http://localhost" })
 public class CronogramaController {
-    
+
     @Autowired
     private CronogramaService cs;
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@RequestBody Cronograma cronograma){
+    public ResponseEntity<?> cadastrar(@RequestBody Cronograma cronograma) {
 
         return cs.cadastrar(cronograma);
     }
 
+    @GetMapping
+    public ResponseEntity<?> listarTodos() {
+        return cs.listarTodos();
+    }
+
     @DeleteMapping("/{idCronograma}")
-    public ResponseEntity<?> remover(@PathVariable Long idCronograma){
+    public ResponseEntity<?> remover(@PathVariable Long idCronograma) {
 
         return cs.remover(idCronograma);
     }
 
     @GetMapping("/{idAluno}")
-    public ResponseEntity<?> listar(@PathVariable Long idAluno){
+    public ResponseEntity<?> listar(@PathVariable Long idAluno) {
         return cs.listar(idAluno);
     }
 

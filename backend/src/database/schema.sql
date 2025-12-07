@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS exercicios (
 
 CREATE TABLE IF NOT EXISTS cronograma (
     id_cronograma BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150),
     id_aluno BIGINT NOT NULL,
     dias_totais INT,
     FOREIGN KEY (id_aluno) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS cronograma_execucao (
 
 -- Inserir exercícios de exemplo
 INSERT INTO exercicios (nome, link_youtube) VALUES
-('Supino Reto', 'https://www.youtube.com/watch?v=rT7DgCr-3pg'),
+('Supino Reto', 'https://youtube.com/shorts/SnJcDUk3h-Q?feature=share'),
 ('Agachamento Livre', 'https://www.youtube.com/watch?v=gcNh17Ckjgg'),
 ('Levantamento Terra', 'https://www.youtube.com/watch?v=op9kVnSso6Q'),
 ('Desenvolvimento com Halteres', 'https://www.youtube.com/watch?v=qEwKCR5JCog'),
