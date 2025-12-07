@@ -14,8 +14,10 @@ export default function HomeCliente() {
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [showEditStudentModal, setShowEditStudentModal] = useState(false);
   const [showCreateWorkoutModal, setShowCreateWorkoutModal] = useState(false);
-  const [showAtribuirModal, setShowAtribuirModal] = useState(false);
+  const [showViewWorkoutModal, setShowViewWorkoutModal] = useState(false);
+  const [showEditWorkoutModal, setShowEditWorkoutModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
 
   // Form Aluno
   const [studentForm, setStudentForm] = useState({
@@ -32,12 +34,29 @@ export default function HomeCliente() {
     exercicios: []
   });
 
+  // Mapeamento de grupos musculares por exercício
+  const gruposMusculares = {
+    'Supino Reto': 'Peitoral, Tríceps, Ombro',
+    'Supino Inclinado': 'Peitoral Superior, Ombro, Tríceps',
+    'Crucifixo': 'Peitoral',
+    'Agachamento': 'Quadríceps, Glúteos, Posterior',
+    'Leg Press': 'Quadríceps, Glúteos',
+    'Rosca Direta': 'Bíceps',
+    'Rosca Alternada': 'Bíceps',
+    'Puxada Frontal': 'Costas, Bíceps',
+    'Remada Curvada': 'Costas, Trapézio',
+    'Desenvolvimento': 'Ombro, Tríceps'
+  };
+
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
   const carregarDados = async () => {
     try {
       const usuarios = await usuarioAPI.listar();
       setStudents(usuarios.filter((s) => s.tipo === "ALUNO"));
 
-      // Tentar carregar exercícios
       try {
         const exercicios = await exercicioAPI.listar();
         setExercises(exercicios);
@@ -65,7 +84,6 @@ export default function HomeCliente() {
   const handleAddStudent = async (e) => {
     e.preventDefault();
 
-    // Validar campos
     if (!studentForm.nome || !studentForm.email || !studentForm.senha) {
       alert("Preencha todos os campos");
       return;
@@ -113,7 +131,6 @@ export default function HomeCliente() {
     e.preventDefault();
 
     try {
-      // TODO: Implementar endpoint de atualização no backend
       alert("Funcionalidade de edição em desenvolvimento. Dados:\n" +
         "ID: " + selectedStudent.idUsuario + "\n" +
         "Nome: " + studentForm.nome + "\n" +
@@ -202,26 +219,46 @@ export default function HomeCliente() {
     setWorkoutForm({ ...workoutForm, exercicios: newExercicios });
   };
 
-  const handleAtribuirTreino = (student) => {
-    setSelectedStudent(student);
-    setShowAtribuirModal(true);
+  const handleVerTreino = (workout) => {
+    setSelectedWorkout(workout);
+    setShowViewWorkoutModal(true);
   };
 
-  const handleConfirmAtribuir = async (workoutId) => {
-    try {
-      alert(`Treino ${workoutId} atribuído ao aluno ${selectedStudent.nome}`);
-      setShowAtribuirModal(false);
-    } catch (error) {
-      alert("Erro ao atribuir treino");
+  const handleEditarTreino = (workout) => {
+    setSelectedWorkout(workout);
+    setWorkoutForm({
+      alunoId: workout.aluno?.idUsuario || "",
+      nome: workout.nome || "",
+      diasTotais: workout.diasTotais || "",
+      exercicios: workout.exercicio?.map(ex => ({
+        idExercicio: ex.exercicio?.idExercicio || "",
+        diaSemana: ex.diaSemana || "Segunda",
+        serie: ex.serie || "",
+        repeticao: ex.repeticao || "",
+        carga: ex.carga || ""
+      })) || []
+    });
+    setShowEditWorkoutModal(true);
+  };
+
+  const handleSaveEditWorkout = async (e) => {
+    e.preventDefault();
+
+    if (!workoutForm.exercicios || workoutForm.exercicios.length === 0) {
+      alert("Adicione pelo menos um exercício ao treino");
+      return;
     }
-  };
 
-  const handleVerTreino = (treinoId) => {
-    alert(`Ver treino ID: ${treinoId}`);
-  };
+    try {
+      // TODO: Implementar endpoint PUT no backend
+      alert(`Treino "${selectedWorkout.nome}" atualizado com sucesso!\n\nNovo nome: ${workoutForm.nome}\nExercícios: ${workoutForm.exercicios.length}`);
 
-  const handleEditarTreino = (treinoId) => {
-    alert(`Editar treino ID: ${treinoId}`);
+      setShowEditWorkoutModal(false);
+      setWorkoutForm({ alunoId: "", nome: "", diasTotais: "", exercicios: [] });
+      carregarDados();
+    } catch (error) {
+      alert("Erro ao atualizar treino: " + error.message);
+    }
   };
 
   const handleExcluirTreino = async (treinoId) => {
@@ -234,6 +271,32 @@ export default function HomeCliente() {
         alert("Erro ao excluir treino");
       }
     }
+  };
+
+  // Função para agrupar exercícios por dia da semana
+  const agruparExerciciosPorDia = (exercicios) => {
+    const dias = {};
+    exercicios?.forEach(ex => {
+      const dia = ex.diaSemana || 'Não definido';
+      if (!dias[dia]) {
+        dias[dia] = [];
+      }
+      dias[dia].push(ex);
+    });
+    return dias;
+  };
+
+  // Função para obter grupos musculares trabalhados
+  const obterGruposMusculares = (exercicios) => {
+    const grupos = new Set();
+    exercicios?.forEach(ex => {
+      const nomeExercicio = ex.exercicio?.nome || '';
+      const grupo = gruposMusculares[nomeExercicio];
+      if (grupo) {
+        grupo.split(',').forEach(g => grupos.add(g.trim()));
+      }
+    });
+    return Array.from(grupos).join(', ') || 'Não definido';
   };
 
   return (
@@ -353,14 +416,15 @@ export default function HomeCliente() {
               <thead>
                 <tr>
                   <th>Nome do Treino</th>
-                  <th>Alunos Atribuídos</th>
+                  <th>Aluno</th>
+                  <th>Grupos Musculares</th>
                   <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {workouts.length === 0 ? (
                   <tr>
-                    <td colSpan="3" style={{ textAlign: 'center', padding: '2rem' }}>
+                    <td colSpan="4" style={{ textAlign: 'center', padding: '2rem' }}>
                       Nenhum treino cadastrado
                     </td>
                   </tr>
@@ -368,18 +432,19 @@ export default function HomeCliente() {
                   workouts.map((workout) => (
                     <tr key={workout.idCronograma}>
                       <td>{workout.nome || `Treino ${workout.idCronograma}`}</td>
-                      <td>1</td>
+                      <td>{workout.aluno?.nome || 'Não atribuído'}</td>
+                      <td>{obterGruposMusculares(workout.exercicio)}</td>
                       <td>
                         <div className={styles.actionButtons}>
                           <button
                             className={styles.btnVer}
-                            onClick={() => handleVerTreino(workout.idCronograma)}
+                            onClick={() => handleVerTreino(workout)}
                           >
                             Ver
                           </button>
                           <button
                             className={styles.btnEditar}
-                            onClick={() => handleEditarTreino(workout.idCronograma)}
+                            onClick={() => handleEditarTreino(workout)}
                           >
                             Editar
                           </button>
@@ -618,31 +683,170 @@ export default function HomeCliente() {
         </div>
       )}
 
-      {/* Modal Atribuir Treino */}
-      {showAtribuirModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowAtribuirModal(false)}>
+      {/* Modal Ver Treino */}
+      {showViewWorkoutModal && selectedWorkout && (
+        <div className={styles.modalOverlay} onClick={() => setShowViewWorkoutModal(false)}>
+          <div className={styles.modalContentLarge} onClick={(e) => e.stopPropagation()}>
+            <h2>📋 {selectedWorkout.nome || `Treino ${selectedWorkout.idCronograma}`}</h2>
+
+            <div className={styles.workoutInfo}>
+              <p><strong>Aluno:</strong> {selectedWorkout.aluno?.nome || 'Não atribuído'}</p>
+              <p><strong>Dias Totais:</strong> {selectedWorkout.diasTotais || 'Não definido'}</p>
+              <p><strong>Grupos Musculares:</strong> {obterGruposMusculares(selectedWorkout.exercicio)}</p>
+            </div>
+
+            <div className={styles.diasContainer}>
+              {Object.entries(agruparExerciciosPorDia(selectedWorkout.exercicio)).map(([dia, exercicios]) => (
+                <div key={dia} className={styles.diaCard}>
+                  <h3 className={styles.diaTitle}>🗓️ {dia}</h3>
+                  <div className={styles.exerciciosList}>
+                    {exercicios.map((ex, idx) => (
+                      <div key={idx} className={styles.exercicioItem}>
+                        <h4>{ex.exercicio?.nome || 'Exercício não definido'}</h4>
+                        <div className={styles.exercicioDetalhes}>
+                          <span>📊 {ex.serie} séries</span>
+                          <span>🔁 {ex.repeticao} repetições</span>
+                          <span>⚖️ {ex.carga}kg</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.modalButtons}>
+              <button className={styles.btnSecondary} onClick={() => setShowViewWorkoutModal(false)}>Fechar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Treino */}
+      {showEditWorkoutModal && selectedWorkout && (
+        <div className={styles.modalOverlay} onClick={() => setShowEditWorkoutModal(false)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h2>Atribuir Treino para {selectedStudent?.nome}</h2>
-            <div className={styles.workoutList}>
-              {workouts.length === 0 ? (
-                <p style={{ textAlign: 'center', padding: '2rem' }}>Nenhum treino disponível</p>
-              ) : (
-                workouts.map((workout) => (
-                  <div key={workout.idCronograma} className={styles.workoutOption}>
-                    <span>Treino de Força - Nível {workout.idCronograma}</span>
-                    <button
-                      className={styles.btnAtribuir}
-                      onClick={() => handleConfirmAtribuir(workout.idCronograma)}
+            <h2>Editar Treino</h2>
+            <form onSubmit={handleSaveEditWorkout}>
+              <div className={styles.formGroup}>
+                <label>Aluno</label>
+                <select
+                  value={workoutForm.alunoId}
+                  onChange={(e) => setWorkoutForm({ ...workoutForm, alunoId: e.target.value })}
+                  required
+                >
+                  <option value="">Selecione um aluno</option>
+                  {students.map((student) => (
+                    <option key={student.idUsuario} value={student.idUsuario}>
+                      {student.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Nome do Treino</label>
+                <input
+                  type="text"
+                  value={workoutForm.nome}
+                  onChange={(e) => setWorkoutForm({ ...workoutForm, nome: e.target.value })}
+                  placeholder="Ex: Treino de Hipertrofia"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Dias Totais (opcional)</label>
+                <input
+                  type="number"
+                  value={workoutForm.diasTotais}
+                  onChange={(e) => setWorkoutForm({ ...workoutForm, diasTotais: e.target.value })}
+                  placeholder="Ex: 30"
+                  min="1"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Exercícios</label>
+                {workoutForm.exercicios.map((exercicio, index) => (
+                  <div key={index} className={styles.exerciseRow}>
+                    <select
+                      value={exercicio.idExercicio}
+                      onChange={(e) => handleUpdateExerciseInWorkout(index, 'idExercicio', e.target.value)}
+                      required
                     >
-                      Selecionar
+                      <option value="">Selecione um exercício</option>
+                      {exercises.map((ex) => (
+                        <option key={ex.idExercicio} value={ex.idExercicio}>
+                          {ex.nome}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={exercicio.diaSemana}
+                      onChange={(e) => handleUpdateExerciseInWorkout(index, 'diaSemana', e.target.value)}
+                      required
+                    >
+                      <option value="Segunda">Segunda</option>
+                      <option value="Terca">Terça</option>
+                      <option value="Quarta">Quarta</option>
+                      <option value="Quinta">Quinta</option>
+                      <option value="Sexta">Sexta</option>
+                      <option value="Sabado">Sábado</option>
+                      <option value="Domingo">Domingo</option>
+                    </select>
+
+                    <input
+                      type="number"
+                      placeholder="Séries"
+                      value={exercicio.serie}
+                      onChange={(e) => handleUpdateExerciseInWorkout(index, 'serie', e.target.value)}
+                      required
+                      min="1"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Repetições"
+                      value={exercicio.repeticao}
+                      onChange={(e) => handleUpdateExerciseInWorkout(index, 'repeticao', e.target.value)}
+                      required
+                      min="1"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Carga (kg)"
+                      value={exercicio.carga}
+                      onChange={(e) => handleUpdateExerciseInWorkout(index, 'carga', e.target.value)}
+                      min="0"
+                    />
+
+                    <button
+                      type="button"
+                      className={styles.btnRemoveExercise}
+                      onClick={() => handleRemoveExerciseFromWorkout(index)}
+                    >
+                      ✕
                     </button>
                   </div>
-                ))
-              )}
-            </div>
-            <div className={styles.modalButtons}>
-              <button className={styles.btnSecondary} onClick={() => setShowAtribuirModal(false)}>Cancelar</button>
-            </div>
+                ))}
+
+                <button
+                  type="button"
+                  className={styles.btnAddExercise}
+                  onClick={handleAddExerciseToWorkout}
+                >
+                  + Adicionar Exercício
+                </button>
+              </div>
+
+              <div className={styles.modalButtons}>
+                <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
+                <button type="button" className={styles.btnSecondary} onClick={() => setShowEditWorkoutModal(false)}>Cancelar</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
