@@ -9,7 +9,7 @@ export default function HomeCliente() {
   const [workouts, setWorkouts] = useState([]);
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Modais
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [showEditStudentModal, setShowEditStudentModal] = useState(false);
@@ -40,7 +40,7 @@ export default function HomeCliente() {
     try {
       const usuarios = await usuarioAPI.listar();
       setStudents(usuarios.filter((s) => s.tipo === "ALUNO"));
-      
+
       // Tentar carregar exercícios
       try {
         const exercicios = await exercicioAPI.listar();
@@ -49,10 +49,15 @@ export default function HomeCliente() {
         console.log("Exercícios não disponíveis");
         setExercises([]);
       }
-      
-      // Cronogramas podem não ter endpoint de listagem geral
-      setWorkouts([]);
-      
+
+      try {
+        const cronogramas = await cronogramaAPI.listar();
+        setWorkouts(cronogramas);
+      } catch (err) {
+        console.log("Cronogramas não disponíveis");
+        setWorkouts([]);
+      }
+
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
       alert("Erro ao carregar dados: " + error.message);
@@ -63,18 +68,18 @@ export default function HomeCliente() {
 
   const handleAddStudent = async (e) => {
     e.preventDefault();
-    
+
     // Validar campos
     if (!studentForm.nome || !studentForm.email || !studentForm.senha) {
       alert("Preencha todos os campos");
       return;
     }
-    
+
     if (studentForm.senha.length < 6) {
       alert("A senha deve ter no mínimo 6 caracteres");
       return;
     }
-    
+
     try {
       const resultado = await cadastrar(
         studentForm.nome.trim(),
@@ -82,7 +87,7 @@ export default function HomeCliente() {
         studentForm.senha,
         "ALUNO"
       );
-      
+
       if (resultado.success) {
         alert("Aluno adicionado com sucesso!");
         setShowAddStudentModal(false);
@@ -110,14 +115,14 @@ export default function HomeCliente() {
 
   const handleSaveEditStudent = async (e) => {
     e.preventDefault();
-    
+
     try {
       // TODO: Implementar endpoint de atualização no backend
-      alert("Funcionalidade de edição em desenvolvimento. Dados:\n" + 
-            "ID: " + selectedStudent.idUsuario + "\n" +
-            "Nome: " + studentForm.nome + "\n" +
-            "Email: " + studentForm.email);
-      
+      alert("Funcionalidade de edição em desenvolvimento. Dados:\n" +
+        "ID: " + selectedStudent.idUsuario + "\n" +
+        "Nome: " + studentForm.nome + "\n" +
+        "Email: " + studentForm.email);
+
       setShowEditStudentModal(false);
       setStudentForm({ nome: "", email: "", senha: "", tipo: "ALUNO" });
       carregarDados();
@@ -128,7 +133,7 @@ export default function HomeCliente() {
 
   const handleRemoverAluno = async (idUsuario) => {
     if (!window.confirm("Tem certeza que deseja remover este aluno?")) return;
-    
+
     try {
       await usuarioAPI.remover(idUsuario);
       alert("Aluno removido com sucesso!");
@@ -141,17 +146,17 @@ export default function HomeCliente() {
 
   const handleCreateWorkout = async (e) => {
     e.preventDefault();
-    
+
     if (!workoutForm.alunoId) {
       alert("Selecione um aluno");
       return;
     }
-    
+
     if (!workoutForm.exercicios || workoutForm.exercicios.length === 0) {
       alert("Adicione pelo menos um exercício ao treino");
       return;
     }
-    
+
     try {
       const cronograma = {
         aluno: { idUsuario: parseInt(workoutForm.alunoId) },
@@ -164,7 +169,7 @@ export default function HomeCliente() {
           carga: parseInt(ex.carga) || 0
         }))
       };
-      
+
       await cronogramaAPI.cadastrar(cronograma);
       alert("Treino criado com sucesso!");
       setShowCreateWorkoutModal(false);
@@ -181,7 +186,7 @@ export default function HomeCliente() {
       ...workoutForm,
       exercicios: [...workoutForm.exercicios, {
         idExercicio: "",
-        diaSemana: "SEGUNDA",
+        diaSemana: "Segunda",
         serie: "",
         repeticao: "",
         carga: ""
@@ -240,9 +245,9 @@ export default function HomeCliente() {
       <header className={styles.header}>
         <nav className={styles.navbar}>
           <div className={styles.logo}>
-            <img 
-              src="/image/LOGO ACADEMIA BRANCO.png" 
-              alt="GymConnect Logo" 
+            <img
+              src="/image/LOGO ACADEMIA BRANCO.png"
+              alt="GymConnect Logo"
               className={styles.logoImage}
             />
           </div>
@@ -277,7 +282,7 @@ export default function HomeCliente() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2>Gerenciar Alunos</h2>
-            <button 
+            <button
               className={styles.btnAdd}
               onClick={() => setShowAddStudentModal(true)}
             >
@@ -311,13 +316,13 @@ export default function HomeCliente() {
                         <td>{student.email}</td>
                         <td>
                           <div className={styles.actionButtons}>
-                            <button 
+                            <button
                               className={styles.btnEditar}
                               onClick={() => handleEditarAluno(student)}
                             >
                               Editar
                             </button>
-                            <button 
+                            <button
                               className={styles.btnRemover}
                               onClick={() => handleRemoverAluno(student.idUsuario)}
                             >
@@ -338,7 +343,7 @@ export default function HomeCliente() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2>Gerenciar Treinos</h2>
-            <button 
+            <button
               className={styles.btnAdd}
               onClick={() => setShowCreateWorkoutModal(true)}
             >
@@ -369,19 +374,19 @@ export default function HomeCliente() {
                       <td>1</td>
                       <td>
                         <div className={styles.actionButtons}>
-                          <button 
+                          <button
                             className={styles.btnVer}
                             onClick={() => handleVerTreino(workout.idCronograma)}
                           >
                             Ver
                           </button>
-                          <button 
+                          <button
                             className={styles.btnEditar}
                             onClick={() => handleEditarTreino(workout.idCronograma)}
                           >
                             Editar
                           </button>
-                          <button 
+                          <button
                             className={styles.btnExcluir}
                             onClick={() => handleExcluirTreino(workout.idCronograma)}
                           >
@@ -409,7 +414,7 @@ export default function HomeCliente() {
                 <input
                   type="text"
                   value={studentForm.nome}
-                  onChange={(e) => setStudentForm({...studentForm, nome: e.target.value})}
+                  onChange={(e) => setStudentForm({ ...studentForm, nome: e.target.value })}
                   required
                 />
               </div>
@@ -418,7 +423,7 @@ export default function HomeCliente() {
                 <input
                   type="email"
                   value={studentForm.email}
-                  onChange={(e) => setStudentForm({...studentForm, email: e.target.value})}
+                  onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
                   required
                 />
               </div>
@@ -427,7 +432,7 @@ export default function HomeCliente() {
                 <input
                   type="password"
                   value={studentForm.senha}
-                  onChange={(e) => setStudentForm({...studentForm, senha: e.target.value})}
+                  onChange={(e) => setStudentForm({ ...studentForm, senha: e.target.value })}
                   required
                 />
               </div>
@@ -451,7 +456,7 @@ export default function HomeCliente() {
                 <input
                   type="text"
                   value={studentForm.nome}
-                  onChange={(e) => setStudentForm({...studentForm, nome: e.target.value})}
+                  onChange={(e) => setStudentForm({ ...studentForm, nome: e.target.value })}
                   required
                 />
               </div>
@@ -460,7 +465,7 @@ export default function HomeCliente() {
                 <input
                   type="email"
                   value={studentForm.email}
-                  onChange={(e) => setStudentForm({...studentForm, email: e.target.value})}
+                  onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
                   required
                   disabled
                   style={{ background: '#f0f0f0', cursor: 'not-allowed' }}
@@ -474,7 +479,7 @@ export default function HomeCliente() {
                 <input
                   type="password"
                   value={studentForm.senha}
-                  onChange={(e) => setStudentForm({...studentForm, senha: e.target.value})}
+                  onChange={(e) => setStudentForm({ ...studentForm, senha: e.target.value })}
                   placeholder="Deixe em branco para manter a senha atual"
                 />
               </div>
@@ -497,7 +502,7 @@ export default function HomeCliente() {
                 <label>Aluno</label>
                 <select
                   value={workoutForm.alunoId}
-                  onChange={(e) => setWorkoutForm({...workoutForm, alunoId: e.target.value})}
+                  onChange={(e) => setWorkoutForm({ ...workoutForm, alunoId: e.target.value })}
                   required
                 >
                   <option value="">Selecione um aluno</option>
@@ -514,7 +519,7 @@ export default function HomeCliente() {
                 <input
                   type="number"
                   value={workoutForm.diasTotais}
-                  onChange={(e) => setWorkoutForm({...workoutForm, diasTotais: e.target.value})}
+                  onChange={(e) => setWorkoutForm({ ...workoutForm, diasTotais: e.target.value })}
                   placeholder="Ex: 30"
                   min="1"
                 />
@@ -542,13 +547,13 @@ export default function HomeCliente() {
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'diaSemana', e.target.value)}
                       required
                     >
-                      <option value="SEGUNDA">Segunda</option>
-                      <option value="TERCA">Terça</option>
-                      <option value="QUARTA">Quarta</option>
-                      <option value="QUINTA">Quinta</option>
-                      <option value="SEXTA">Sexta</option>
-                      <option value="SABADO">Sábado</option>
-                      <option value="DOMINGO">Domingo</option>
+                      <option value="Segunda">Segunda</option>
+                      <option value="Terca">Terça</option>
+                      <option value="Quarta">Quarta</option>
+                      <option value="Quinta">Quinta</option>
+                      <option value="Sexta">Sexta</option>
+                      <option value="Sabado">Sábado</option>
+                      <option value="Domingo">Domingo</option>
                     </select>
 
                     <input
@@ -617,7 +622,7 @@ export default function HomeCliente() {
                 workouts.map((workout) => (
                   <div key={workout.idCronograma} className={styles.workoutOption}>
                     <span>Treino de Força - Nível {workout.idCronograma}</span>
-                    <button 
+                    <button
                       className={styles.btnAtribuir}
                       onClick={() => handleConfirmAtribuir(workout.idCronograma)}
                     >

@@ -51,3 +51,16 @@ CREATE TABLE IF NOT EXISTS cronograma_execucao (
     status ENUM('FEITO', 'NAO FEITO'),
     FOREIGN KEY (id_cronograma) REFERENCES cronograma(id_cronograma) ON DELETE CASCADE
 );
+
+-- Inserir exercícios de exemplo
+INSERT INTO exercicios (nome, link_youtube) VALUES
+('Supino Reto', 'https://www.youtube.com/watch?v=rT7DgCr-3pg'),
+('Agachamento Livre', 'https://www.youtube.com/watch?v=gcNh17Ckjgg'),
+('Levantamento Terra', 'https://www.youtube.com/watch?v=op9kVnSso6Q'),
+('Desenvolvimento com Halteres', 'https://www.youtube.com/watch?v=qEwKCR5JCog'),
+('Remada Curvada', 'https://www.youtube.com/watch?v=kBWAon7ItDw'),
+('Rosca Direta', 'https://www.youtube.com/watch?v=kwG2ipFRgfo'),
+('Tríceps Testa', 'https://www.youtube.com/watch?v=d_KZxkY_0cM'),
+('Leg Press', 'https://www.youtube.com/watch?v=IZxyjW7MPJQ'),
+('Puxada Frontal', 'https://www.youtube.com/watch?v=CAwf7n6Luuc'),
+('Abdominal Supra', 'https://www.youtube.com/watch?v=1we3bh9uhqY');
