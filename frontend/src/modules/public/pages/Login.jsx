@@ -29,12 +29,10 @@ export default function Login() {
   return (
     <div className={styles.authContainer}>
       <div className={styles.authCard}>
-        {/* Header Preto com Logo - PADRÃO LANDING */}
         <div className={styles.authHeader}>
           <img src="/image/LOGO ACADEMIA BRANCO.png" alt="GymConnect" className={styles.authLogoImage} />
         </div>
 
-        {/* Conteúdo do Card */}
         <div className={styles.authContent}>
           <h1>Bem-vindo</h1>
           <p>Faça login para acessar sua conta</p>
@@ -49,6 +47,7 @@ export default function Login() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 required
                 disabled={carregando}
               />
@@ -60,6 +59,7 @@ export default function Login() {
                 placeholder="••••••••"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                autoComplete="current-password"
                 required
                 disabled={carregando}
               />

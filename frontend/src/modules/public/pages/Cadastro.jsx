@@ -41,12 +41,10 @@ export default function Cadastro() {
   return (
     <div className={styles.authContainer}>
       <div className={styles.authCard}>
-        {/* Header Preto com Logo - PADRÃO LANDING */}
         <div className={styles.authHeader}>
           <img src="/image/LOGO ACADEMIA BRANCO.png" alt="GymConnect" className={styles.authLogoImage} />
         </div>
 
-        {/* Conteúdo do Card */}
         <div className={styles.authContent}>
           <h1>Cadastro</h1>
           <p>Crie sua conta para começar</p>
@@ -61,6 +59,7 @@ export default function Cadastro() {
                 placeholder="João Silva"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
+                autoComplete="name"
                 required
                 disabled={carregando}
               />
@@ -72,14 +71,15 @@ export default function Cadastro() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 required
                 disabled={carregando}
               />
             </div>
             <div className={styles.formGroup}>
               <label>Tipo de Conta</label>
-              <select 
-                value={tipo} 
+              <select
+                value={tipo}
                 onChange={(e) => setTipo(e.target.value)}
                 required
                 disabled={carregando}
@@ -95,6 +95,7 @@ export default function Cadastro() {
                 placeholder="••••••••"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                autoComplete="new-password"
                 required
                 disabled={carregando}
               />
@@ -106,6 +107,7 @@ export default function Cadastro() {
                 placeholder="••••••••"
                 value={confirmaSenha}
                 onChange={(e) => setConfirmaSenha(e.target.value)}
+                autoComplete="new-password"
                 required
                 disabled={carregando}
               />

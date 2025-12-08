@@ -495,6 +495,7 @@ export default function HomeCliente() {
                   type="password"
                   value={studentForm.senha}
                   onChange={(e) => setStudentForm({ ...studentForm, senha: e.target.value })}
+                  autoComplete="new-password"
                   required
                 />
               </div>
@@ -543,6 +544,7 @@ export default function HomeCliente() {
                   value={studentForm.senha}
                   onChange={(e) => setStudentForm({ ...studentForm, senha: e.target.value })}
                   placeholder="Deixe em branco para manter a senha atual"
+                  autoComplete="new-password"
                 />
               </div>
               <div className={styles.modalButtons}>
