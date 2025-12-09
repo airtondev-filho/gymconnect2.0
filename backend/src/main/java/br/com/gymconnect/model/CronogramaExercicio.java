@@ -1,11 +1,12 @@
 package br.com.gymconnect.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,25 +20,24 @@ import lombok.Setter;
 @Setter
 
 @Entity
-@Table(name="cronograma_exercicio")
+@Table(name = "cronograma_exercicio")
 public class CronogramaExercicio {
-    
+
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id_cronograma_exercicio")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cronograma_exercicio")
     private Long idCronogramaExercicio;
 
-    @ManyToOne
-    @JoinColumn(name="id_cronograma", nullable=false)
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_cronograma", nullable = false)
     private Cronograma cronograma;
 
     @ManyToOne
-    @JoinColumn(name="id_exercicio", nullable=false)
+    @JoinColumn(name = "id_exercicio", nullable = false)
     private Exercicio exercicio;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="dia_semana")
+    @Column(name = "dia_semana")
     private DiaSemana diaSemana;
 
     @Column
@@ -48,5 +48,11 @@ public class CronogramaExercicio {
 
     @Column
     private Integer carga;
+
+    // Getter manual para forçar serialização
+    @JsonProperty("cronograma")
+    public Cronograma getCronograma() {
+        return this.cronograma;
+    }
 
 }

@@ -56,12 +56,12 @@ CREATE TABLE IF NOT EXISTS cronograma_execucao (
 -- Inserir exercícios de exemplo
 INSERT INTO exercicios (nome, link_youtube) VALUES
 ('Supino Reto', 'https://youtube.com/shorts/SnJcDUk3h-Q?feature=share'),
-('Agachamento Livre', 'https://www.youtube.com/watch?v=gcNh17Ckjgg'),
-('Levantamento Terra', 'https://www.youtube.com/watch?v=op9kVnSso6Q'),
-('Desenvolvimento com Halteres', 'https://www.youtube.com/watch?v=qEwKCR5JCog'),
-('Remada Curvada', 'https://www.youtube.com/watch?v=kBWAon7ItDw'),
-('Rosca Direta', 'https://www.youtube.com/watch?v=kwG2ipFRgfo'),
-('Tríceps Testa', 'https://www.youtube.com/watch?v=d_KZxkY_0cM'),
-('Leg Press', 'https://www.youtube.com/watch?v=IZxyjW7MPJQ'),
-('Puxada Frontal', 'https://www.youtube.com/watch?v=CAwf7n6Luuc'),
-('Abdominal Supra', 'https://www.youtube.com/watch?v=1we3bh9uhqY');
+('Agachamento Livre', 'https://youtu.be/WlqopJZ7wKc'),
+('Levantamento Terra', 'https://youtube.com/shorts/lypkq6SgrPA?feature=share'),
+('Desenvolvimento com Halteres', 'https://youtube.com/shorts/zAigVHiTxG8?feature=share'),
+('Remada Curvada', 'https://youtube.com/shorts/8oW3pEYFBj4?si=YPXNnNlagKZEjw2d'),
+('Rosca Direta', 'https://youtube.com/shorts/ojlJslnaae4?si=QG3zpkhH3lbP6iko'),
+('Tríceps Testa', 'https://youtube.com/shorts/HGyilsk-AoM?feature=share'),
+('Leg Press', 'https://youtube.com/shorts/ByCts73yzlE'),
+('Puxada Frontal', 'https://youtube.com/shorts/LLMck_smwoc'),
+('Abdominal Supra', 'https://youtube.com/shorts/MKq4WH-eBAQ?si=Fp8dp2RQ61nVzOs7');

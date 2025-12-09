@@ -200,7 +200,7 @@ export default function HomeCliente() {
       ...workoutForm,
       exercicios: [...workoutForm.exercicios, {
         idExercicio: "",
-        diaSemana: "Segunda",
+        diaSemana: "",
         serie: "",
         repeticao: "",
         carga: ""
@@ -232,7 +232,7 @@ export default function HomeCliente() {
       diasTotais: workout.diasTotais || "",
       exercicios: workout.exercicio?.map(ex => ({
         idExercicio: ex.exercicio?.idExercicio || "",
-        diaSemana: ex.diaSemana || "Segunda",
+        diaSemana: ex.diaSemana || "",
         serie: ex.serie || "",
         repeticao: ex.repeticao || "",
         carga: ex.carga || ""
@@ -559,7 +559,7 @@ export default function HomeCliente() {
       {/* Modal Criar Treino */}
       {showCreateWorkoutModal && (
         <div className={styles.modalOverlay} onClick={() => setShowCreateWorkoutModal(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalContentLarge} onClick={(e) => e.stopPropagation()}>
             <h2>Criar Treino</h2>
             <form onSubmit={handleCreateWorkout}>
               <div className={styles.formGroup}>
@@ -607,9 +607,10 @@ export default function HomeCliente() {
                     <select
                       value={exercicio.idExercicio}
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'idExercicio', e.target.value)}
+                      style={{ minWidth: '200px' }}
                       required
                     >
-                      <option value="">Selecione um exercício</option>
+                      <option value="">Exercício</option>
                       {exercises.map((ex) => (
                         <option key={ex.idExercicio} value={ex.idExercicio}>
                           {ex.nome}
@@ -620,8 +621,10 @@ export default function HomeCliente() {
                     <select
                       value={exercicio.diaSemana}
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'diaSemana', e.target.value)}
+                      style={{ minWidth: '120px' }}
                       required
                     >
+                      <option value="">Dia</option>
                       <option value="Segunda">Segunda</option>
                       <option value="Terca">Terça</option>
                       <option value="Quarta">Quarta</option>
@@ -654,6 +657,7 @@ export default function HomeCliente() {
                       placeholder="Carga (kg)"
                       value={exercicio.carga}
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'carga', e.target.value)}
+                      style={{ minWidth: '100px' }}
                       min="0"
                     />
 
@@ -727,7 +731,7 @@ export default function HomeCliente() {
       {/* Modal Editar Treino */}
       {showEditWorkoutModal && selectedWorkout && (
         <div className={styles.modalOverlay} onClick={() => setShowEditWorkoutModal(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalContentLarge} onClick={(e) => e.stopPropagation()}>
             <h2>Editar Treino</h2>
             <form onSubmit={handleSaveEditWorkout}>
               <div className={styles.formGroup}>
@@ -775,9 +779,10 @@ export default function HomeCliente() {
                     <select
                       value={exercicio.idExercicio}
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'idExercicio', e.target.value)}
+                      style={{ minWidth: '200px' }}
                       required
                     >
-                      <option value="">Selecione um exercício</option>
+                      <option value="">Exercício</option>
                       {exercises.map((ex) => (
                         <option key={ex.idExercicio} value={ex.idExercicio}>
                           {ex.nome}
@@ -788,8 +793,10 @@ export default function HomeCliente() {
                     <select
                       value={exercicio.diaSemana}
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'diaSemana', e.target.value)}
+                      style={{ minWidth: '120px' }}
                       required
                     >
+                      <option value="">Dia</option>
                       <option value="Segunda">Segunda</option>
                       <option value="Terca">Terça</option>
                       <option value="Quarta">Quarta</option>
@@ -822,6 +829,7 @@ export default function HomeCliente() {
                       placeholder="Carga (kg)"
                       value={exercicio.carga}
                       onChange={(e) => handleUpdateExerciseInWorkout(index, 'carga', e.target.value)}
+                      style={{ minWidth: '100px' }}
                       min="0"
                     />
 

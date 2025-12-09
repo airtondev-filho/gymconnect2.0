@@ -8,7 +8,7 @@ export default function Landing() {
 
   const slides = [
     {
-      image: "/image/gymconnect_escritorio.png",
+      image: "/image/perna.png",
       title: "Gestão Completa",
     },
     {
@@ -50,38 +50,38 @@ export default function Landing() {
   return (
     <div className={styles.landingPage}>
       <header className={styles.header}>
-  <nav className={styles.navbar}>
-    <div className={styles.logo}>
-      <img 
-        src="/image/LOGO ACADEMIA BRANCO.png" 
-        alt="GymConnect Logo" 
-        className={styles.logoImage}
-      />
-    </div>
+        <nav className={styles.navbar}>
+          <div className={styles.logo}>
+            <img
+              src="/image/LOGO ACADEMIA BRANCO.png"
+              alt="GymConnect Logo"
+              className={styles.logoImage}
+            />
+          </div>
 
-    <div className={styles.navLinks}>
-      <a href="#inicio">Início</a>
-      <a href="#sobre">Sobre</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#contato">Contato</a>
-    </div>
+          <div className={styles.navLinks}>
+            <a href="#inicio">Início</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#contato">Contato</a>
+          </div>
 
-    <div className={styles.navButtons}>
-      <button 
-        className={styles.btnLogin}
-        onClick={() => navigate("/login")}
-      >
-        Login
-      </button>
-      <button 
-        className={styles.btnRegister}
-        onClick={() => navigate("/cadastro")}
-      >
-        Cadastrar
-      </button>
-    </div>
-  </nav>
-</header>
+          <div className={styles.navButtons}>
+            <button
+              className={styles.btnLogin}
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+            <button
+              className={styles.btnRegister}
+              onClick={() => navigate("/cadastro")}
+            >
+              Cadastrar
+            </button>
+          </div>
+        </nav>
+      </header>
 
       <section id="inicio" className={styles.hero}>
         <div className={styles.heroContent}>
@@ -95,7 +95,7 @@ export default function Landing() {
             fitness.
           </p>
           <div className={styles.heroButtons}>
-            <button 
+            <button
               className={styles.btnPrimary}
               onClick={() => navigate("/cadastro")}
             >
@@ -110,9 +110,8 @@ export default function Landing() {
             {slides.map((slide, index) => (
               <div
                 key={index}
-                className={`${styles.slide} ${
-                  index === currentSlide ? styles.active : ""
-                }`}
+                className={`${styles.slide} ${index === currentSlide ? styles.active : ""
+                  }`}
               >
                 <img
                   src={slide.image}
@@ -144,9 +143,8 @@ export default function Landing() {
             {slides.map((_, index) => (
               <button
                 key={index}
-                className={`${styles.dot} ${
-                  index === currentSlide ? styles.activeDot : ""
-                }`}
+                className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ""
+                  }`}
                 onClick={() => setCurrentSlide(index)}
                 aria-label={`Ir para slide ${index + 1}`}
               />
@@ -178,7 +176,7 @@ export default function Landing() {
             <img
               src="/image/gymconnect_escritorio.png"
               alt="escritório da GymConnect"
-            />  
+            />
           </div>
         </div>
       </section>
@@ -262,7 +260,7 @@ export default function Landing() {
               <li>Telefone: (11) 9999-9999</li>
             </ul>
           </div>
-        </div>   
+        </div>
         <div className={styles.footerBottom}>
           <p>&copy; 2024 GymConnect. Todos os direitos reservados.</p>
         </div>

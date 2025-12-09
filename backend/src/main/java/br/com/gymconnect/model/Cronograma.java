@@ -2,7 +2,8 @@ package br.com.gymconnect.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -34,12 +35,14 @@ public class Cronograma {
 
     @ManyToOne
     @JoinColumn(name = "id_aluno", nullable = false)
+    @JsonIgnoreProperties({ "senha", "authorities", "credentialsNonExpired", "accountNonExpired", "accountNonLocked",
+            "enabled" })
     private Usuario aluno;
 
     @Column(name = "dias_totais", nullable = true)
     private Integer diasTotais;
 
     @OneToMany(mappedBy = "cronograma", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnore
     private List<CronogramaExercicio> exercicio;
 }

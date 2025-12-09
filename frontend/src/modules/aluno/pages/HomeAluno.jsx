@@ -3,29 +3,62 @@ import { useAuth } from "../../../context/AuthContext";
 import { cronogramaExercicioAPI } from "../../../services/api";
 import styles from "./styles.module.css";
 
-const DAYS = ["SEGUNDA", "TERCA", "QUARTA", "QUINTA", "SEXTA", "SABADO", "DOMINGO"];
+// Mapeamento de grupos musculares por exercício
+const gruposMusculares = {
+  'Supino Reto': 'Peitoral, Tríceps, Ombro',
+  'Supino Inclinado': 'Peitoral Superior, Ombro, Tríceps',
+  'Crucifixo': 'Peitoral',
+  'Agachamento': 'Quadríceps, Glúteos, Posterior',
+  'Agachamento Livre': 'Quadríceps, Glúteos, Posterior',
+  'Leg Press': 'Quadríceps, Glúteos',
+  'Rosca Direta': 'Bíceps',
+  'Rosca Alternada': 'Bíceps',
+  'Puxada Frontal': 'Costas, Bíceps',
+  'Remada Curvada': 'Costas, Bíceps',
+  'Desenvolvimento': 'Ombro, Tríceps',
+  'Desenvolvimento com Halteres': 'Ombro, Tríceps',
+  'Tríceps Testa': 'Tríceps',
+  'Levantamento Terra': 'Costas, Posterior, Glúteos',
+  'Abdominal': 'Abdômen',
+  'Abdominal Supra': 'Abdômen'
+};
+
+// Obter grupos musculares de um treino
+const obterGruposMusculares = (exercicios) => {
+  const grupos = new Set();
+  exercicios.forEach(ex => {
+    const nomeExercicio = ex.nome;
+    const grupo = gruposMusculares[nomeExercicio];
+    if (grupo) {
+      grupo.split(',').forEach(g => grupos.add(g.trim()));
+    }
+  });
+  return Array.from(grupos).join(', ') || 'Variados';
+};
 
 // Função para extrair ID do vídeo do YouTube
 const getYouTubeVideoId = (url) => {
   if (!url) return null;
-  
+
   // Para YouTube Shorts
   if (url.includes('/shorts/')) {
     const match = url.match(/\/shorts\/([^?&]+)/);
     return match ? match[1] : null;
   }
-  
+
   // Para URLs normais do YouTube
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
 };
+
 export default function HomeAluno() {
   const { user, logout } = useAuth();
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [completedExercises, setCompletedExercises] = useState({});
+  const [proximoTreino, setProximoTreino] = useState(null);
 
   useEffect(() => {
     carregarTreinos();
@@ -36,12 +69,22 @@ export default function HomeAluno() {
     }
   }, []);
 
+  // Calcular progresso total
+  const calcularProgresso = () => {
+    if (!selectedWorkout || !selectedWorkout.exercicios.length) return 0;
+
+    const totalExercicios = selectedWorkout.exercicios.length;
+    const concluidos = selectedWorkout.exercicios.filter(ex => completedExercises[ex.id]).length;
+
+    return Math.round((concluidos / totalExercicios) * 100);
+  };
+
   const carregarTreinos = async () => {
     try {
       const uid = user?.idUsuario || user?.id;
       if (!uid) return;
       const dados = await cronogramaExercicioAPI.listarPorAluno(uid);
-      
+
       // Agrupar por cronograma
       const cronogramas = {};
       dados.forEach((item) => {
@@ -49,7 +92,7 @@ export default function HomeAluno() {
         if (!cronogramas[cronogramaId]) {
           cronogramas[cronogramaId] = {
             id: cronogramaId,
-            nome: `Treino ${Object.keys(cronogramas).length + 1}`,
+            nome: item.cronograma?.nome || `Treino ${Object.keys(cronogramas).length + 1}`,
             exercicios: []
           };
         }
@@ -63,10 +106,27 @@ export default function HomeAluno() {
           diaSemana: item.diaSemana
         });
       });
-      
-      setWorkouts(Object.values(cronogramas));
-      if (Object.values(cronogramas).length > 0) {
-        setSelectedWorkout(Object.values(cronogramas)[0]);
+
+      const workoutsArray = Object.values(cronogramas);
+      setWorkouts(workoutsArray);
+
+      // DEBUG - MOSTRA NO CONSOLE
+      console.log('📊 Total de treinos encontrados:', workoutsArray.length);
+      console.log('📋 Treinos:', workoutsArray.map(w => w.nome));
+      console.log('🔢 IDs dos cronogramas:', workoutsArray.map(w => w.id));
+
+      if (workoutsArray.length > 0) {
+        // Carregar índice do treino atual do localStorage
+        const currentIndex = parseInt(localStorage.getItem(`current_workout_${user?.idUsuario}`)) || 0;
+        setSelectedWorkout(workoutsArray[currentIndex % workoutsArray.length]);
+
+        // Calcular próximo treino na rotação
+        if (workoutsArray.length > 1) {
+          const nextIndex = (currentIndex + 1) % workoutsArray.length;
+          setProximoTreino(workoutsArray[nextIndex]);
+        } else {
+          setProximoTreino(null); // Só tem um treino
+        }
       }
     } catch (error) {
       console.error("Erro ao carregar treinos:", error);
@@ -91,9 +151,9 @@ export default function HomeAluno() {
       <header className={styles.header}>
         <div className={styles.navbar}>
           <div className={styles.logo}>
-            <img 
-              src="/image/LOGO ACADEMIA BRANCO.png" 
-              alt="GymConnect" 
+            <img
+              src="/image/LOGO ACADEMIA BRANCO.png"
+              alt="GymConnect"
               className={styles.logoImage}
             />
           </div>
@@ -103,12 +163,12 @@ export default function HomeAluno() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Conteúdo Principal */}
       <main className={styles.main}>
         <h1 className={styles.pageTitle}>Meu Painel</h1>
         <p className={styles.welcomeText}>Bem-vindo, {user?.nome}</p>
 
-        {/* Stats Cards */}
+        {/* Estatísticas */}
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <h3 className={styles.statLabel}>Treino Atual</h3>
@@ -116,15 +176,22 @@ export default function HomeAluno() {
           </div>
           <div className={styles.statCard}>
             <h3 className={styles.statLabel}>Próximo Treino</h3>
-            <p className={styles.statValue}>--</p>
+            <p className={styles.statValue}>
+              {proximoTreino ? proximoTreino.nome : (workouts.length === 1 ? "Mesmo treino" : "--")}
+            </p>
+            {proximoTreino && (
+              <p className={styles.statDetail} style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: '#666' }}>
+                {obterGruposMusculares(proximoTreino.exercicios)}
+              </p>
+            )}
           </div>
           <div className={styles.statCard}>
             <h3 className={styles.statLabel}>Progresso Total</h3>
-            <p className={styles.statValue}>0%</p>
+            <p className={styles.statValue}>{calcularProgresso()}%</p>
           </div>
         </div>
 
-        {/* Workout Details */}
+        {/* Detalhes do Treino */}
         {loading ? (
           <p>Carregando treinos...</p>
         ) : selectedWorkout ? (
@@ -134,7 +201,7 @@ export default function HomeAluno() {
               <div className={styles.workoutHeader}>
                 <h3>{selectedWorkout.nome}</h3>
                 <p className={styles.workoutDesc}>
-                  Foco em exercícios compostos para ganho de força
+                  {obterGruposMusculares(selectedWorkout.exercicios)}
                 </p>
               </div>
 
@@ -143,10 +210,10 @@ export default function HomeAluno() {
                 {selectedWorkout.exercicios.map((exercise) => {
                   const videoId = getYouTubeVideoId(exercise.videoUrl);
                   const isCompleted = completedExercises[exercise.id];
-                  
+
                   return (
-                    <div 
-                      key={exercise.id} 
+                    <div
+                      key={exercise.id}
                       className={`${styles.exerciseItem} ${isCompleted ? styles.completed : ''}`}
                     >
                       <div className={styles.exerciseInfo}>
@@ -188,7 +255,6 @@ export default function HomeAluno() {
                 })}
               </div>
 
-              <button className={styles.btnMarcar}>Marcar</button>
             </div>
           </div>
         ) : (

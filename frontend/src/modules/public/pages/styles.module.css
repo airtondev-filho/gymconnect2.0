@@ -181,7 +181,7 @@ body {
   padding: 4rem 2rem;
   background: #fff9ea;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr;
   gap: 3rem;
   align-items: center;
   max-width: 1200px;
@@ -271,6 +271,7 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
+  text-align: center;
 }
 
 .serviceCard:hover {
@@ -280,10 +281,12 @@ body {
 .serviceIcon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .serviceCard p {
   color: #666;
+  text-align: center;
 }
 
 /* Contact - PADRÃO 1200px (max 600px centralizado) */
@@ -442,7 +445,7 @@ body {
   color: #1a1a1a;
 }
 
-.authContent > p {
+.authContent>p {
   text-align: center;
   color: #666;
   margin-bottom: 2rem;
@@ -503,7 +506,7 @@ body {
 .carouselContainer {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
   height: 400px;
   overflow: hidden;
   border-radius: 16px;
@@ -540,6 +543,7 @@ body {
 
 /* Carousel Navigation Buttons */
 .carouselBtn {
+  display: none;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
