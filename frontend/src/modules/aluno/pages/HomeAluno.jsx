@@ -58,7 +58,6 @@ export default function HomeAluno() {
   const [loading, setLoading] = useState(true);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [completedExercises, setCompletedExercises] = useState({});
-  const [proximoTreino, setProximoTreino] = useState(null);
 
   useEffect(() => {
     carregarTreinos();
@@ -110,23 +109,10 @@ export default function HomeAluno() {
       const workoutsArray = Object.values(cronogramas);
       setWorkouts(workoutsArray);
 
-      // DEBUG - MOSTRA NO CONSOLE
-      console.log('📊 Total de treinos encontrados:', workoutsArray.length);
-      console.log('📋 Treinos:', workoutsArray.map(w => w.nome));
-      console.log('🔢 IDs dos cronogramas:', workoutsArray.map(w => w.id));
-
       if (workoutsArray.length > 0) {
         // Carregar índice do treino atual do localStorage
         const currentIndex = parseInt(localStorage.getItem(`current_workout_${user?.idUsuario}`)) || 0;
         setSelectedWorkout(workoutsArray[currentIndex % workoutsArray.length]);
-
-        // Calcular próximo treino na rotação
-        if (workoutsArray.length > 1) {
-          const nextIndex = (currentIndex + 1) % workoutsArray.length;
-          setProximoTreino(workoutsArray[nextIndex]);
-        } else {
-          setProximoTreino(null); // Só tem um treino
-        }
       }
     } catch (error) {
       console.error("Erro ao carregar treinos:", error);
@@ -168,24 +154,13 @@ export default function HomeAluno() {
         <h1 className={styles.pageTitle}>Meu Painel</h1>
         <p className={styles.welcomeText}>Bem-vindo, {user?.nome}</p>
 
-        {/* Estatísticas */}
+        {/* Estatísticas - AGORA SÓ 2 CARDS */}
         <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
+          <div className={`${styles.statCard} ${styles.statCardTreino}`}>
             <h3 className={styles.statLabel}>Treino Atual</h3>
             <p className={styles.statValue}>{selectedWorkout?.nome || "--"}</p>
           </div>
-          <div className={styles.statCard}>
-            <h3 className={styles.statLabel}>Próximo Treino</h3>
-            <p className={styles.statValue}>
-              {proximoTreino ? proximoTreino.nome : (workouts.length === 1 ? "Mesmo treino" : "--")}
-            </p>
-            {proximoTreino && (
-              <p className={styles.statDetail} style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: '#666' }}>
-                {obterGruposMusculares(proximoTreino.exercicios)}
-              </p>
-            )}
-          </div>
-          <div className={styles.statCard}>
+          <div className={`${styles.statCard} ${styles.statCardProgresso}`}>
             <h3 className={styles.statLabel}>Progresso Total</h3>
             <p className={styles.statValue}>{calcularProgresso()}%</p>
           </div>

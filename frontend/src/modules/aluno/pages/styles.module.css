@@ -357,15 +357,15 @@
   .statsGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .exerciseItem {
     grid-template-columns: 1fr;
   }
-  
+
   .actionButtons {
     flex-direction: column;
   }
-  
+
   .table th,
   .table td {
     padding: 0.75rem 1rem;
@@ -524,7 +524,8 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 450px;
-  overflow: hidden; /* Para o header preto não vazar */
+  overflow: hidden;
+  /* Para o header preto não vazar */
 }
 
 /* Header Preto Dentro do Card - PADRÃO LANDING */
@@ -642,4 +643,31 @@
 
 .exerciseItem.completed .exerciseName {
   text-decoration: line-through;
+}
+
+/* Cores para os cards de estatísticas */
+.statCardTreino {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000;
+}
+
+.statCardTreino .statLabel {
+  color: #000;
+}
+
+.statCardTreino .statValue {
+  color: #000;
+}
+
+.statCardProgresso {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+}
+
+.statCardProgresso .statLabel {
+  color: #fff;
+}
+
+.statCardProgresso .statValue {
+  color: #fff;
 }
