@@ -18,8 +18,6 @@ import br.com.gymconnect.repository.ExercicioRepository;
 
 @Service
 public class CronogramaExercicioService {
-    
-
 
     @Autowired
     private CronogramaExercicioRepository csr;
@@ -30,27 +28,27 @@ public class CronogramaExercicioService {
     @Autowired
     private ExercicioRepository exr;
 
-    public ResponseEntity<?> cadastrar(CronogramaExercicio cronogExerc){
+    public ResponseEntity<?> cadastrar(CronogramaExercicio cronogExerc) {
 
         ResponseModel rm = new ResponseModel();
-    
+
         Long cronograma = cronogExerc.getCronograma().getIdCronograma();
-        
+
         Long exercicio = cronogExerc.getExercicio().getIdExercicio();
 
-        Optional<Cronograma> cronogramaOpt = cr.findById(cronograma);    
+        Optional<Cronograma> cronogramaOpt = cr.findById(cronograma);
 
         if (cronogramaOpt.isEmpty()) {
-            
+
             rm.setMensagem("Campo cronograma precisa ser preenchido!");
             return new ResponseEntity<ResponseModel>(rm, HttpStatus.BAD_REQUEST);
 
-        } 
+        }
 
         Optional<Exercicio> exercicioOpt = exr.findById(exercicio);
 
         if (exercicioOpt.isEmpty()) {
-            
+
             rm.setMensagem("Exercicio não preenchido!");
             return new ResponseEntity<ResponseModel>(rm, HttpStatus.BAD_REQUEST);
 
@@ -61,19 +59,19 @@ public class CronogramaExercicioService {
         cronogExerc.setExercicio(exercicioOpt.get());
 
         CronogramaExercicio salvo = csr.save(cronogExerc);
-        
+
         rm.setMensagem("Cadastrado com sucesso!");
         return new ResponseEntity<>(salvo, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> remover(Long idExercicoCronograma){
+    public ResponseEntity<?> remover(Long idExercicoCronograma) {
 
         ResponseModel rm = new ResponseModel();
 
         Optional<CronogramaExercicio> cronogExercOpt = csr.findById(idExercicoCronograma);
 
         if (cronogExercOpt.isEmpty()) {
-            
+
             rm.setMensagem("Cronograma de exercicios não encontrado!");
             return new ResponseEntity<>(rm, HttpStatus.BAD_REQUEST);
 
@@ -89,8 +87,40 @@ public class CronogramaExercicioService {
 
         List<CronogramaExercicio> exercicios = csr.findByCronograma_Aluno_IdUsuario(idAluno);
 
-        // Sempre retornar a lista, mesmo que vazia
-        return ResponseEntity.ok(exercicios);
+        // Criar lista de respostas com cronograma incluído manualmente
+        java.util.List<java.util.Map<String, Object>> response = new java.util.ArrayList<>();
+
+        for (CronogramaExercicio ce : exercicios) {
+            java.util.Map<String, Object> item = new java.util.LinkedHashMap<>();
+            item.put("idCronogramaExercicio", ce.getIdCronogramaExercicio());
+
+            // Adicionar cronograma manualmente
+            java.util.Map<String, Object> cronogramaData = new java.util.LinkedHashMap<>();
+            cronogramaData.put("idCronograma", ce.getCronograma().getIdCronograma());
+            cronogramaData.put("nome", ce.getCronograma().getNome());
+            item.put("cronograma", cronogramaData);
+
+            // Adicionar exercício
+            java.util.Map<String, Object> exercicioData = new java.util.LinkedHashMap<>();
+            exercicioData.put("idExercicio", ce.getExercicio().getIdExercicio());
+            exercicioData.put("nome", ce.getExercicio().getNome());
+            exercicioData.put("linkYoutube", ce.getExercicio().getLinkYoutube());
+            item.put("exercicio", exercicioData);
+
+            item.put("diaSemana", ce.getDiaSemana());
+            item.put("serie", ce.getSerie());
+            item.put("repeticao", ce.getRepeticao());
+            item.put("carga", ce.getCarga());
+
+            response.add(item);
+        }
+
+        return ResponseEntity.ok(response);
     }
+
+    public ResponseEntity<?> listarPorCronograma(Long idCronograma) {
+    List<CronogramaExercicio> exercicios = csr.findByCronogramaIdCronograma(idCronograma);
+    return ResponseEntity.ok(exercicios);
+}
 
 }

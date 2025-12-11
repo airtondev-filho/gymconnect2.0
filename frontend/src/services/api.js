@@ -53,7 +53,7 @@ export const authAPI = {
     return response.json();
   },
 
-    async cadastrar(nome, email, senha, tipo) {
+  async cadastrar(nome, email, senha, tipo) {
     const response = await fetch(`${API_BASE_URL}/auth/cadastrar`, {
       method: "POST",
       headers: {
@@ -66,11 +66,11 @@ export const authAPI = {
       if (response.status === 400) {
         throw new Error("Email já cadastrado no sistema");
       }
-      
+
       const error = await response
         .json()
         .catch(() => ({ mensagem: "Erro ao cadastrar" }));
-      
+
       throw new Error(error.mensagem || error.message || "Erro ao cadastrar");
     }
 
@@ -172,6 +172,16 @@ export const cronogramaExercicioAPI = {
   async listarPorAluno(idAluno) {
     const result = await fetchWithAuth(
       `/cronogramaexercicio/aluno/${idAluno}`,
+      {
+        method: "GET",
+      }
+    );
+    return Array.isArray(result) ? result : [];
+  },
+
+  async listarPorCronograma(idCronograma) {
+    const result = await fetchWithAuth(
+      `/cronogramaexercicio/cronograma/${idCronograma}`,
       {
         method: "GET",
       }

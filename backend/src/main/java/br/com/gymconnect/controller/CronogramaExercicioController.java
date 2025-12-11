@@ -16,30 +16,31 @@ import br.com.gymconnect.service.CronogramaExercicioService;
 
 @RestController
 @RequestMapping("/cronogramaexercicio")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost"})
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost:3000", "http://localhost" })
 
 public class CronogramaExercicioController {
-    
+
     @Autowired
     private CronogramaExercicioService ces;
 
     @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody CronogramaExercicio cronogExerc) {
-
         return ces.cadastrar(cronogExerc);
-
     }
 
     @DeleteMapping("/{idCronogramaExercicio}")
     public ResponseEntity<?> remover(@PathVariable Long idCronogramaExercicio) {
-
         return ces.remover(idCronogramaExercicio);
     }
 
     @GetMapping("/aluno/{idAluno}")
     public ResponseEntity<?> listarPorAluno(@PathVariable Long idAluno) {
-
         return ces.listar(idAluno);
-
     }
+
+    @GetMapping("/cronograma/{idCronograma}")
+    public ResponseEntity<?> listarPorCronograma(@PathVariable Long idCronograma) {
+        return ces.listarPorCronograma(idCronograma);
+    }
+
 }

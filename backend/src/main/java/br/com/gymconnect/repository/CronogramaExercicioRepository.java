@@ -14,4 +14,7 @@ public interface CronogramaExercicioRepository extends JpaRepository<CronogramaE
 
     @Query("SELECT ce FROM CronogramaExercicio ce JOIN FETCH ce.cronograma c WHERE c.aluno.idUsuario = :idAluno")
     List<CronogramaExercicio> findByCronograma_Aluno_IdUsuario(@Param("idAluno") Long idAluno);
+
+    List<CronogramaExercicio> findByCronogramaIdCronograma(Long idCronograma);
+
 }
